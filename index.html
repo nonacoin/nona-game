@@ -613,81 +613,72 @@
     /* ======================================= */
     
     /* تبلت و موبایل‌های بزرگ */
-    /* تبلت و موبایل‌های بزرگ */
-@media (max-width: 768px) {
-    body {
-        padding: 8px;
+        /* تبلت و موبایل‌های بزرگ */
+    @media (max-width: 768px) {
+        body {
+            padding: 8px;
+        }
+        
+        #top-wrapper {
+            flex-direction: row;  /* تغییر به row */
+            flex-wrap: wrap;  /* اضافه شد */
+            justify-content: center;  /* تغییر دادم */
+            gap: 8px;  /* کاهش دادم */
+            width: 100%;
+        }
+        
+        .player-box {
+            width: calc(50% - 4px);  /* تغییر دادم */
+            max-width: 180px;  /* اضافه کردم */
+            min-width: 140px;  /* اضافه کردم */
+            padding: 8px 10px;  /* کاهش دادم */
+        }
+        
+        #score-board {
+            width: 95%;
+            max-width: 420px;
+            padding: 12px;
+        }
+        
+        .score-header {
+            flex-direction: row;  /* تغییر به row */
+            gap: 5px;  /* کاهش gap */
+        }
+        
+        .score-column-title {
+            margin: 0 2px;  /* margin افقی کوچک */
+            width: auto;  /* تغییر به auto */
+            flex: 1;  /* اضافه کردم */
+            font-size: 11px;  /* اضافه کردم */
+            padding: 5px 8px;  /* اضافه کردم */
+        }
+        
+        #main-box {
+            width: 95%;
+            max-width: 400px;
+            padding: 12px;
+        }
+        
+        #dice-container {
+            gap: 10px;
+        }
+        
+        .scene {
+            width: 45px;
+            height: 45px;
+        }
+        
+        .game-btn {
+            padding: 8px 20px;
+            font-size: 13px;
+            min-width: 80px;
+        }
+        
+        .results-screen {
+            width: 95%;
+            padding: 18px;
+        }
     }
-    
-    #top-wrapper {
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .player-box {
-        width: 95%;
-        max-width: 300px;
-    }
-    
-    #score-board {
-        width: 95%;
-        max-width: 420px;
-        padding: 12px;
-    }
-    
-    /* ❌ این بخش مشکل سازه: */
-    /* .score-header {
-        flex-direction: column;
-        gap: 8px;
-    }
-    
-    .score-column-title {
-        margin: 0;
-        width: 100%;
-    } */
-    
-    /* ✅ به جاش این رو بذار: */
-    .score-header {
-        flex-direction: row;  /* تغییر به row */
-        gap: 5px;  /* کاهش gap */
-    }
-    
-    .score-column-title {
-        margin: 0 2px;  /* margin افقی کوچک */
-        width: auto;  /* تغییر به auto */
-        flex: 1;  /* اضافه کردم */
-        font-size: 11px;  /* اضافه کردم */
-        padding: 5px 8px;  /* اضافه کردم */
-    }
-    
-    #main-box {
-        width: 95%;
-        max-width: 400px;
-        padding: 12px;
-    }
-    
-    #dice-container {
-        gap: 10px;
-    }
-    
-    .scene {
-        width: 45px;
-        height: 45px;
-    }
-    
-    .game-btn {
-        padding: 8px 20px;
-        font-size: 13px;
-        min-width: 80px;
-    }
-    
-    .results-screen {
-        width: 95%;
-        padding: 18px;
-    }
-}
-
     /* موبایل‌های کوچک */
     
 
@@ -1687,4 +1678,5 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 </body>
+
 </html>
