@@ -614,69 +614,78 @@
     
     /* تبلت و موبایل‌های بزرگ */
         /* تبلت و موبایل‌های بزرگ */
+        /* تبلت و موبایل‌های بزرگ */
     @media (max-width: 768px) {
         body {
             padding: 8px;
         }
         
         #top-wrapper {
-            flex-direction: row;  /* تغییر به row */
-            flex-wrap: wrap;  /* اضافه شد */
-            justify-content: center;  /* تغییر دادم */
-            gap: 8px;  /* کاهش دادم */
+            flex-direction: row;
+            flex-wrap: nowrap;  /* تغییر به nowrap */
+            justify-content: space-between;  /* تغییر به space-between */
+            gap: 5px;
             width: 100%;
         }
         
         .player-box {
-            width: calc(50% - 4px);  /* تغییر دادم */
-            max-width: 180px;  /* اضافه کردم */
-            min-width: 140px;  /* اضافه کردم */
-            padding: 8px 10px;  /* کاهش دادم */
+            width: 48%;  /* ساده‌تر */
+            min-width: 140px;
+            padding: 6px 8px;
+            flex: 1;  /* اضافه کردم */
+        }
+        
+        .player-title {
+            font-size: 12px;  /* اضافه کردم */
+        }
+        
+        .player-timer {
+            font-size: 12px;  /* اضافه کردم */
+            padding: 3px 6px;
+            min-width: 28px;
         }
         
         #score-board {
-            width: 95%;
-            max-width: 420px;
-            padding: 12px;
+            width: 100%;
+            max-width: 100%;
+            padding: 10px;
         }
         
         .score-header {
-            flex-direction: row;  /* تغییر به row */
-            gap: 5px;  /* کاهش gap */
+            flex-direction: row;
+            gap: 3px;
         }
         
         .score-column-title {
-            margin: 0 2px;  /* margin افقی کوچک */
-            width: auto;  /* تغییر به auto */
-            flex: 1;  /* اضافه کردم */
-            font-size: 11px;  /* اضافه کردم */
-            padding: 5px 8px;  /* اضافه کردم */
+            margin: 0 1px;
+            font-size: 10px;
+            padding: 4px 6px;
         }
         
         #main-box {
-            width: 95%;
-            max-width: 400px;
-            padding: 12px;
+            width: 100%;
+            max-width: 100%;
+            padding: 10px;
         }
         
         #dice-container {
-            gap: 10px;
+            gap: 8px;
         }
         
         .scene {
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
         }
         
         .game-btn {
-            padding: 8px 20px;
-            font-size: 13px;
-            min-width: 80px;
+            padding: 8px 16px;
+            font-size: 12px;
+            min-width: 70px;
         }
         
         .results-screen {
-            width: 95%;
-            padding: 18px;
+            width: 100%;
+            padding: 15px;
         }
     }
     /* موبایل‌های کوچک */
@@ -1680,3 +1689,4 @@ window.addEventListener('DOMContentLoaded', () => {
 </body>
 
 </html>
+
