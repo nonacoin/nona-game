@@ -55,22 +55,28 @@
     /* ردیف بالایی: دو پلیر */
     #top-wrapper {
         display: flex;
-        gap: 15px;
+        gap: 10px;
         justify-content: center;
         width: 100%;
+		 flex-wrap: wrap;  /* این خط رو اضافه کن */
+
     }
 
     /* جعبه هر پلیر */
+        /* جعبه هر پلیر */
     .player-box {
-        width: 192px;
+        width: auto;  /* از 192px به auto تغییر بده */
+        flex: 1;  /* این خط رو اضافه کن */
+        min-width: 140px;  /* این خط رو اضافه کن */
+        max-width: 180px;  /* این خط رو اضافه کن */
         background: rgba(30, 30, 46, 0.9);
-        padding: 11px 14px;
+        padding: 8px 10px;  /* از 11px 14px به 8px 10px تغییر بده */
         border-radius: 10px;
         box-shadow: 0 9px 21px rgba(0, 0, 0, 0.4);
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 9px;
+        gap: 6px;  /* از 9px به 6px تغییر بده */
         transition: all 0.3s ease;
     }
 
@@ -1689,4 +1695,5 @@ window.addEventListener('DOMContentLoaded', () => {
 </body>
 
 </html>
+
 
