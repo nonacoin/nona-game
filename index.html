@@ -225,7 +225,7 @@
         border-bottom: 2px solid rgba(255, 255, 255, 0.1);
     }
 
-    /* عنوان هر ستون */
+    /* عنوان هر ستون 
     .score-column-title {
         font-size: 14px;
         font-weight: bold;
@@ -234,7 +234,22 @@
         flex: 1;
         text-align: center;
         margin: 0 5px;
-    }
+    }*/
+	.score-column-title {
+    font-size: 14px;  /* از 14px به 11px */
+    font-weight: bold;
+    padding: 6px 1px;  /* از 8px 15px به 5px 8px */
+    border-radius: 1px;
+    flex: 1;
+    text-align: center;
+    margin: 0 2px;  /* از 5px به 2px */
+    min-width: 0;  /* اضافه کردم */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
 
     /* عنوان ستون پلیر 1 */
     .score-column-title.player1 {
@@ -327,21 +342,22 @@
 
     /* جعبه نمایش عدد (امتیاز) */
     .value-box {
-        width: 85px;
-        padding: 8px 10px;
-        font-size: 14px;
-        border-radius: 8px;
-        border: none;
-        outline: none;
-        text-align: center;
-        background: rgba(40, 40, 60, 0.9);
-        color: #fff;
-        direction: ltr;
-        font-weight: bold;
-        font-family: 'Courier New', monospace;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        transition: all 0.3s ease;
-    }
+    width: 60px;  /* از 85px به 60px تغییر دادم */
+    padding: 6px 8px;  /* از 8px 10px به 6px 8px تغییر دادم */
+    font-size: 12px;  /* از 14px به 12px تغییر دادم */
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    text-align: center;
+    background: rgba(40, 40, 60, 0.9);
+    color: #fff;
+    direction: ltr;
+    font-weight: bold;
+    font-family: 'Courier New', monospace;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
 
     /* امتیاز ثبت شده توسط پلیر 1 */
     .value-box.confirmed.player1 {
