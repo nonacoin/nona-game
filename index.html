@@ -674,57 +674,24 @@
 
     /* موبایل‌های کوچک */
     @media (max-width: 480px) {
-        .player-title {
-            font-size: 14px;
-        }
-        
-        .player-timer {
-            font-size: 14px;
-            padding: 5px 10px;
-        }
-        
-        .value-box {
-            width: 70px;
-            padding: 6px 8px;
-            font-size: 12px;
-        }
-        
-        .mini-dice {
-            width: 35px;
-            height: 35px;
-        }
-        
-        #button-row {
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .game-btn {
-            width: 90%;
-        }
-        
-        .scene {
-            width: 40px;
-            height: 40px;
-        }
-        
-        .pip {
-            width: 5px;
-            height: 5px;
-        }
-        
-        .score-row {
-            flex-direction: column;
-            gap: 8px;
-            padding: 10px;
-        }
-        
-        .score-column {
-            width: 100%;
-            margin: 2px 0;
-        }
+    .score-row {
+        /* flex-direction: column; حذف کردم */
+        /* gap: 8px; حذف کردم */
+        padding: 6px 0;  /* تغییر دادم */
     }
+    
+    .score-column {
+        /* width: 100%; حذف کردم */
+        margin: 0 2px;  /* تغییر دادم */
+    }
+    
+    .score-column-title {
+        font-size: 10px;
+        padding: 4px 6px;
+        margin: 0 1px;
+    }
+}
+
 
     /* انیمیشن‌های اضافی */
     @keyframes shake {
