@@ -53,30 +53,30 @@
     /* ======================================= */
     
     /* ردیف بالایی: دو پلیر */
+        /* ردیف بالایی: دو پلیر */
     #top-wrapper {
         display: flex;
-        gap: 10px;
-        justify-content: center;
+        gap: 5px;  /* از 15px به 5px */
+        justify-content: space-between;  /* تغییر به space-between */
         width: 100%;
-		 flex-wrap: wrap;  /* این خط رو اضافه کن */
-
+        padding: 0 5px;  /* اضافه کردم */
     }
 
     /* جعبه هر پلیر */
         /* جعبه هر پلیر */
+        /* جعبه هر پلیر */
     .player-box {
-        width: auto;  /* از 192px به auto تغییر بده */
-        flex: 1;  /* این خط رو اضافه کن */
-        min-width: 140px;  /* این خط رو اضافه کن */
-        max-width: 180px;  /* این خط رو اضافه کن */
+        width: 45%;  /* تغییر اصلی: از 192px به 45% */
+        min-width: 130px;  /* حداقل عرض */
+        max-width: 150px;  /* حداکثر عرض */
         background: rgba(30, 30, 46, 0.9);
-        padding: 8px 10px;  /* از 11px 14px به 8px 10px تغییر بده */
-        border-radius: 10px;
-        box-shadow: 0 9px 21px rgba(0, 0, 0, 0.4);
+        padding: 6px 8px;  /* کاهش بیشتر */
+        border-radius: 8px;  /* کاهش از 10px */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);  /* کاهش */
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 6px;  /* از 9px به 6px تغییر بده */
+        gap: 4px;  /* کاهش بیشتر */
         transition: all 0.3s ease;
     }
 
@@ -1695,5 +1695,6 @@ window.addEventListener('DOMContentLoaded', () => {
 </body>
 
 </html>
+
 
 
