@@ -1694,21 +1694,36 @@ document.getElementById('restart-btn').addEventListener('click', function() {
 /* ======================================= */
 /* 🔄 نمایش وضعیت نوبت                     */
 /* ======================================= */
+/* ======================================= */
+/* 🔄 نمایش وضعیت نوبت                     */
+/* ======================================= */
 
 function updateTurnDisplay() {
     const left = document.getElementById('playerBox1');
     const right = document.getElementById('playerBox2');
     const leftTitle = left.querySelector('.player-title');
     const rightTitle = right.querySelector('.player-title');
+    const leftTimer = left.querySelector('.player-timer');
+    const rightTimer = right.querySelector('.player-timer');
     
+    // تنظیم نام‌ها بر اساس نقش
     if (gameData.player_number === 1) {
-        leftTitle.textContent = "شما (بازیکن 1)";
-        rightTitle.textContent = "حریف (بازیکن 2)";
+        leftTitle.textContent = "شما 👑";
+        rightTitle.textContent = "حریف ⚔️";
+        leftTimer.id = "player1Timer";
+        rightTimer.id = "player2Timer";
+    } else if (gameData.player_number === 2) {
+        leftTitle.textContent = "حریف ⚔️";
+        rightTitle.textContent = "شما 👑";
+        leftTimer.id = "player2Timer";
+        rightTimer.id = "player1Timer";
     } else {
-        leftTitle.textContent = "حریف (بازیکن 1)";
-        rightTitle.textContent = "شما (بازیکن 2)";
+        // حالت تماشاگر
+        leftTitle.textContent = "بازیکن 1";
+        rightTitle.textContent = "بازیکن 2";
     }
     
+    // نمایش وضعیت نوبت
     if (gameState.currentPlayer === 1) {
         left.classList.remove('inactive');
         left.classList.add('active-player');
@@ -1723,6 +1738,7 @@ function updateTurnDisplay() {
     
     updateTimerDisplay();
 }
+
 
 // ============================================
 // 🟢 تابع ارتباط با سرور (GAS)
@@ -1756,46 +1772,136 @@ async function callServer(action, data = {}) {
 // ============================================
 // 🟢 بارگذاری وضعیت بازی از سرور
 // ============================================
+// ============================================
+// 🟢 بارگذاری وضعیت بازی از سرور
+// ============================================
 async function loadGameFromServer() {
-    const result = await callServer('getGameState');
+    console.log("در حال دریافت وضعیت بازی از سرور...");
     
-    if (result.error) {
-        console.log("بازی آفلاین ادامه می‌یابد");
+    const result = await callServer('getGameState');
+    console.log("پاسخ سرور:", result);
+    
+    if (!result.success) {
+        console.log("خطا از سرور:", result.message);
+        
+        // حالت آفلاین: نمایش پیغام
+        if (result.setup_required) {
+            alert("⚠️ سیستم آماده نیست. لطفا شیت‌های بازی را تنظیم کنید.");
+        }
         return;
     }
     
-    // اطلاعات رو از سرور بگیر و تنظیم کن
+    // ذخیره اطلاعات بازی
     gameData.role = result.role;
     gameData.status = result.status;
     gameData.player_number = result.player_number || gameData.player_number;
     
-    // نمایش اطلاعات در کنسول برای تست
-    console.log("اطلاعات بازی از سرور:", result);
-    
-    // اگر تماشاگر هستی، کنترل‌ها رو غیرفعال کن
-    if (gameData.role === "spectator") {
-        disablePlayerControls();
+    // اگر بازی waiting است و تو پلیر ۱ هستی، منتظر بمان
+    if (result.status === "waiting" && gameData.player_number === 1) {
+        document.getElementById("roll-btn").disabled = true;
+        document.getElementById("play-btn").disabled = true;
+        
+        // نمایش پیغام انتظار
+        const waitMsg = document.createElement('div');
+        waitMsg.id = "waiting-message";
+        waitMsg.innerHTML = `
+            <div style="background:rgba(255,215,0,0.2); padding:15px; border-radius:10px; text-align:center; margin:10px;">
+                <div style="font-size:18px; color:#FFD700;">⏳ در انتظار بازیکن دوم...</div>
+                <div style="font-size:14px; margin-top:10px;">لینک دعوت: ${window.location.href}</div>
+            </div>
+        `;
+        document.querySelector('#game-container').prepend(waitMsg);
     }
     
-    // آپدیت نمایش نام بازیکنان
+    // اگر تماشاگر هستی
+    if (gameData.role === "spectator") {
+        disablePlayerControls();
+        
+        const specMsg = document.createElement('div');
+        specMsg.innerHTML = `
+            <div style="background:rgba(138,43,226,0.2); padding:10px; border-radius:8px; text-align:center; margin:10px;">
+                👁️ <b>حالت تماشاگر</b> - شما در حال مشاهده بازی هستید
+            </div>
+        `;
+        document.querySelector('#game-container').prepend(specMsg);
+    }
+    
+    // آپدیت نمایش
     updateTurnDisplay();
+    
+    // شروع تایمر اگر بازی playing است
+    if (result.status === "playing") {
+        startTimer();
+    }
+    
+    console.log("بازی با موفقیت بارگذاری شد:", gameData);
 }
-
 /* ======================================= */
 /* 🚀 مقداردهی اولیه بازی                  */
 /* ======================================= */
-
-window.addEventListener('DOMContentLoaded', () => {
-    // اول بازی رو از سرور بارگذاری کن
-    loadGameFromServer().then(() => {
-        // بعد UI رو بساز
-        renderScoreBoard();
-        renderDice();
-        updateTurnDisplay();
+// ============================================
+// 🟢 تابع refresh خودکار برای بازی‌های waiting
+// ============================================
+function setupAutoRefresh() {
+    // فقط برای بازی‌های waiting و برای پلیر ۱
+    if (gameData.status === "waiting" && gameData.player_number === 1) {
+        setInterval(async () => {
+            console.log("اتوماتیک رفرش برای چک کردن پلیر دوم...");
+            const result = await callServer('getGameState');
+            
+            if (result.success && result.status === "playing") {
+                // پلیر دوم پیوست!
+                gameData.status = "playing";
+                
+                // حذف پیغام انتظار
+                const waitMsg = document.getElementById("waiting-message");
+                if (waitMsg) waitMsg.remove();
+                
+                // فعال کردن دکمه‌ها
+                document.getElementById("roll-btn").disabled = false;
+                
+                // نمایش پیغام شروع
+                alert("🎮 بازیکن دوم پیوست! بازی شروع شد!");
+                location.reload(); // صفحه رو رفرش کن
+            }
+        }, 5000); // هر 5 ثانیه چک کن
+    }
+    
+    // برای همه: هر 30 ثانیه وضعیت رو چک کن
+    setInterval(async () => {
+        const result = await callServer('getGameState');
+        if (result.success) {
+            gameData.status = result.status;
+            gameData.current_turn = result.current_turn;
+            
+            // اگر نوبت عوض شده
+            if (result.current_turn === `player${gameData.player_number}`) {
+                console.log("نوبت شماست!");
+            }
+        }
+    }, 30000);
+}
+window.addEventListener('DOMContentLoaded', async () => {
+    console.log("صفحه بازی بارگذاری شد");
+    
+    // اول UI رو بساز
+    renderScoreBoard();
+    renderDice();
+    updateTurnDisplay();
+    
+    // سپس وضعیت بازی رو از سرور بگیر
+    await loadGameFromServer();
+    
+    // اگر بازی در حال اجراست، تایمر رو شروع کن
+    if (gameData.status === "playing") {
         startTimer();
-    });
+    }
+    
+    // تنظیم رفرش خودکار
+    setupAutoRefresh();
 });
 </script>
 </body>
 
 </html>
+
