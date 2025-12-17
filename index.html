@@ -868,39 +868,6 @@ const tickSound = document.getElementById('tickSound');
 
 const baseURL = "https://raw.githubusercontent.com/nonacoin/main/main/Dice/";
 
-// ============================================
-// 🟢 اطلاعات بازی از URL
-// ============================================
-const urlParams = new URLSearchParams(window.location.search);
-const gameData = {
-    game_id: urlParams.get('game_id') || "DEMO_GAME",
-    telegram_id: parseInt(urlParams.get('telegram_id')) || 0,
-    player_number: parseInt(urlParams.get('player')) || 1,
-    role: "player", // بعداً از سرور می‌گیریم
-    status: "waiting" // بعداً از سرور می‌گیریم
-};
-
-// ============================================
-// 🟢 تابع غیرفعال کردن کنترل‌ها برای spectator
-// ============================================
-function disablePlayerControls() {
-    document.getElementById("roll-btn").disabled = true;
-    document.getElementById("play-btn").disabled = true;
-    
-    document.querySelectorAll('.scene').forEach(scene => {
-        scene.style.pointerEvents = 'none';
-    });
-    
-    document.querySelectorAll('.score-row').forEach(row => {
-        row.style.pointerEvents = 'none';
-    });
-    
-    const msg = document.createElement('div');
-    msg.textContent = '👁️ حالت تماشاگر - شما فقط می‌توانید مشاهده کنید';
-    msg.style.cssText = 'background:rgba(0,0,0,0.7);color:white;padding:10px;border-radius:5px;margin:10px;text-align:center;';
-    document.querySelector('#game-container').prepend(msg);
-}
-
 /* ======================================= */
 /* 🎲 توابع کمکی تاس                       */
 /* ======================================= */
@@ -948,7 +915,7 @@ let timerInterval = null;
 let timeLeft = 30;
 const TOTAL_TIME = 30;
 let warningPlayed = false;
-let isTimeUpProcessing = false;
+let isTimeUpProcessing = false; // برای جلوگیری از اجرای همزمان timeUp
 
 function startTimer() {
     if (gameState.gameFinished) return;
@@ -967,8 +934,10 @@ function startTimer() {
         timeLeft--;
         updateTimerDisplay();
         
+        // تپش قلب با هر ثانیه
         pulseTimer();
         
+        // 10 ثانیه آخر
         if (timeLeft <= 10) {
             enableWarningMode();
             if (timeLeft <= 5 && !warningPlayed) {
@@ -1042,13 +1011,14 @@ function updateTimerDisplay() {
 }
 
 function timeUp() {
-    if (isTimeUpProcessing) return;
+    if (isTimeUpProcessing) return; // اگر در حال پردازش هستیم، دوباره اجرا نکن
     isTimeUpProcessing = true;
     
     clearInterval(timerInterval);
     timeoutSound.currentTime = 0;
     timeoutSound.play();
     
+    // نمایش پیام نوبت از دست رفته
     showTurnLostMessage();
     
     setTimeout(() => {
@@ -1058,7 +1028,7 @@ function timeUp() {
             autoSelectAndConfirm();
         }
         isTimeUpProcessing = false;
-    }, 1000);
+    }, 1000); // یک ثانیه تأخیر برای نمایش پیام
 }
 
 function showTurnLostMessage() {
@@ -1074,6 +1044,7 @@ function showTurnLostMessage() {
     }, 2000);
 }
 
+/* ثبت خودکار دسته انتخاب شده */
 function autoConfirmSelection() {
     const { player, rowIndex } = gameState.selectedCategory;
     const playerKey = `player${player}`;
@@ -1081,9 +1052,11 @@ function autoConfirmSelection() {
     const score = potentialScores[rowIndex];
     gameState.confirmedCategories[playerKey][rowIndex] = score;
     
+    // پخش صدای ثبت
     confirmSound.currentTime = 0;
     confirmSound.play();
     
+    // نمایش پیام ثبت خودکار
     showAutoConfirmMessage(player, rowIndex, score);
     
     setTimeout(() => {
@@ -1107,11 +1080,13 @@ function showAutoConfirmMessage(player, rowIndex, score) {
     }, 1500);
 }
 
+/* انتخاب و ثبت خودکار (وقتی کاربر چیزی انتخاب نکرده) */
 function autoSelectAndConfirm() {
     const playerKey = `player${gameState.currentPlayer}`;
     const potentialScores = calculatePotentialScores();
     let availableIndex = -1;
     
+    // پیدا کردن اولین دسته خالی
     for (let i = 0; i < 6; i++) {
         if (gameState.confirmedCategories[playerKey][i] === null) { 
             availableIndex = i; 
@@ -1119,9 +1094,11 @@ function autoSelectAndConfirm() {
         }
     }
     
+    // اگر دسته خالی پیدا شد، امتیاز 0 ثبت کن
     if (availableIndex !== -1) {
         gameState.confirmedCategories[playerKey][availableIndex] = 0;
         
+        // نمایش پیام
         const message = document.createElement('div');
         message.className = 'turn-lost-message';
         message.style.background = 'linear-gradient(135deg, #FF3333, #CC0000)';
@@ -1166,11 +1143,12 @@ function calculatePotentialScores() {
 }
 
 /* ======================================= */
-/* 🏗️ رندر جدول امتیازات                   */
+/* 🏗️ رندر جدول امتیازات - نسخه جدید       */
 /* ======================================= */
 
 function renderScoreBoard() {
     const container = document.getElementById('score-board');
+    // هدر قبلاً در HTML تعریف شده، فقط ردیف‌ها را اضافه می‌کنیم
     const existingHeader = container.querySelector('.score-header');
     container.innerHTML = '';
     container.appendChild(existingHeader);
@@ -1181,8 +1159,10 @@ function renderScoreBoard() {
         row.dataset.category = i-1;
         row.dataset.value = i;
 
+        // ستون پلیر 1
         const col1 = document.createElement('div');
         col1.className = 'score-column';
+        
         const input1 = document.createElement('input');
         input1.type = 'text';
         input1.className = 'value-box';
@@ -1191,8 +1171,10 @@ function renderScoreBoard() {
         input1.value = '0';
         col1.appendChild(input1);
 
+        // ستون تاس (وسط)
         const colDice = document.createElement('div');
         colDice.className = 'score-column dice';
+        
         const img = document.createElement('img');
         img.src = baseURL + i + '.png';
         img.className = 'mini-dice';
@@ -1200,8 +1182,10 @@ function renderScoreBoard() {
         img.title = `برای ثبت امتیاز ${i} کلیک کنید`;
         colDice.appendChild(img);
 
+        // ستون پلیر 2
         const col2 = document.createElement('div');
         col2.className = 'score-column';
+        
         const input2 = document.createElement('input');
         input2.type = 'text';
         input2.className = 'value-box';
@@ -1214,6 +1198,7 @@ function renderScoreBoard() {
         row.appendChild(colDice);
         row.appendChild(col2);
 
+        // رویداد کلیک برای انتخاب دسته
         row.addEventListener('click', () => {
             if (gameState.gameFinished) return;
             if (gameState.rollCount === 0) return;
@@ -1260,6 +1245,7 @@ function updateScoreDisplays() {
         const conf1 = gameState.confirmedCategories.player1[index];
         const conf2 = gameState.confirmedCategories.player2[index];
 
+        // پلیر 1
         if (conf1 !== null) {
             input1.value = conf1;
             input1.classList.add('confirmed','player1');
@@ -1275,6 +1261,7 @@ function updateScoreDisplays() {
             }
         }
 
+        // پلیر 2
         if (conf2 !== null) {
             input2.value = conf2;
             input2.classList.add('confirmed','player2');
@@ -1463,6 +1450,7 @@ document.getElementById("play-btn").addEventListener("click", function() {
 
     gameState.confirmedCategories[playerKey][rowIndex] = score;
     
+    // افکت انیمیشن برای امتیاز ثبت شده
     const selectedRow = document.querySelector('#score-board .score-row.selected');
     if (selectedRow) {
         const valueBox = selectedRow.querySelector(`.value-box[data-player="${player}"]`);
@@ -1698,29 +1686,7 @@ document.getElementById('restart-btn').addEventListener('click', function() {
 function updateTurnDisplay() {
     const left = document.getElementById('playerBox1');
     const right = document.getElementById('playerBox2');
-    const leftTitle = left.querySelector('.player-title');
-    const rightTitle = right.querySelector('.player-title');
-    const leftTimer = left.querySelector('.player-timer');
-    const rightTimer = right.querySelector('.player-timer');
     
-    // تنظیم نام‌ها بر اساس نقش
-    if (gameData.player_number === 1) {
-        leftTitle.textContent = "شما 👑";
-        rightTitle.textContent = "حریف ⚔️";
-        leftTimer.id = "player1Timer";
-        rightTimer.id = "player2Timer";
-    } else if (gameData.player_number === 2) {
-        leftTitle.textContent = "حریف ⚔️";
-        rightTitle.textContent = "شما 👑";
-        leftTimer.id = "player2Timer";
-        rightTimer.id = "player1Timer";
-    } else {
-        // حالت تماشاگر
-        leftTitle.textContent = "بازیکن 1";
-        rightTitle.textContent = "بازیکن 2";
-    }
-    
-    // نمایش وضعیت نوبت
     if (gameState.currentPlayer === 1) {
         left.classList.remove('inactive');
         left.classList.add('active-player');
@@ -1736,162 +1702,28 @@ function updateTurnDisplay() {
     updateTimerDisplay();
 }
 
-// ============================================
-// 🟢 تابع ارتباط با سرور (GAS)
-// ============================================
-async function callServer(action, data = {}) {
-    try {
-        // این آدرس رو بعداً پر می‌کنیم
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbxLuX7sDcICugvh0YiXL3Hzep_rxpy18AU_ZNaoUcAf3Ip2r5mOmLUDb2MCNedvddavPw/exec";
-        
-        const response = await fetch(GAS_URL, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                action: action,
-                ...data,
-                game_id: gameData.game_id,
-                telegram_id: gameData.telegram_id
-            })
-        });
-        
-        return await response.json();
-    } catch (error) {
-        console.error('خطا در ارتباط با سرور:', error);
-        return {error: true, message: "خطا در ارتباط با سرور"};
-    }
-}
-
-// ============================================
-// 🟢 بارگذاری وضعیت بازی از سرور
-// ============================================
-async function loadGameFromServer() {
-    console.log("در حال دریافت وضعیت بازی از سرور...");
-    
-    const result = await callServer('getGameState');
-    console.log("پاسخ سرور:", result);
-    
-    if (!result.success) {
-        console.log("خطا از سرور:", result.message);
-        
-        // حالت آفلاین: نمایش پیغام
-        if (result.setup_required) {
-            alert("⚠️ سیستم آماده نیست. لطفا شیت‌های بازی را تنظیم کنید.");
-        }
-        return;
-    }
-    
-    // ذخیره اطلاعات بازی
-    gameData.role = result.role;
-    gameData.status = result.status;
-    gameData.player_number = result.player_number || gameData.player_number;
-    
-    // اگر بازی waiting است و تو پلیر ۱ هستی، منتظر بمان
-    if (result.status === "waiting" && gameData.player_number === 1) {
-        document.getElementById("roll-btn").disabled = true;
-        document.getElementById("play-btn").disabled = true;
-        
-        // نمایش پیغام انتظار
-        const waitMsg = document.createElement('div');
-        waitMsg.id = "waiting-message";
-        waitMsg.innerHTML = `
-            <div style="background:rgba(255,215,0,0.2); padding:15px; border-radius:10px; text-align:center; margin:10px;">
-                <div style="font-size:18px; color:#FFD700;">⏳ در انتظار بازیکن دوم...</div>
-                <div style="font-size:14px; margin-top:10px;">لینک دعوت: ${window.location.href}</div>
-            </div>
-        `;
-        document.querySelector('#game-container').prepend(waitMsg);
-    }
-    
-    // اگر تماشاگر هستی
-    if (gameData.role === "spectator") {
-        disablePlayerControls();
-        
-        const specMsg = document.createElement('div');
-        specMsg.innerHTML = `
-            <div style="background:rgba(138,43,226,0.2); padding:10px; border-radius:8px; text-align:center; margin:10px;">
-                👁️ <b>حالت تماشاگر</b> - شما در حال مشاهده بازی هستید
-            </div>
-        `;
-        document.querySelector('#game-container').prepend(specMsg);
-    }
-    
-    // آپدیت نمایش
-    updateTurnDisplay();
-    
-    // شروع تایمر اگر بازی playing است
-    if (result.status === "playing") {
-        startTimer();
-    }
-    
-    console.log("بازی با موفقیت بارگذاری شد:", gameData);
-}
-
-// ============================================
-// 🟢 تابع refresh خودکار برای بازی‌های waiting
-// ============================================
-function setupAutoRefresh() {
-    // فقط برای بازی‌های waiting و برای پلیر ۱
-    if (gameData.status === "waiting" && gameData.player_number === 1) {
-        setInterval(async () => {
-            console.log("اتوماتیک رفرش برای چک کردن پلیر دوم...");
-            const result = await callServer('getGameState');
-            
-            if (result.success && result.status === "playing") {
-                // پلیر دوم پیوست!
-                gameData.status = "playing";
-                
-                // حذف پیغام انتظار
-                const waitMsg = document.getElementById("waiting-message");
-                if (waitMsg) waitMsg.remove();
-                
-                // فعال کردن دکمه‌ها
-                document.getElementById("roll-btn").disabled = false;
-                
-                // نمایش پیغام شروع
-                alert("🎮 بازیکن دوم پیوست! بازی شروع شد!");
-                location.reload(); // صفحه رو رفرش کن
-            }
-        }, 5000); // هر 5 ثانیه چک کن
-    }
-    
-    // برای همه: هر 30 ثانیه وضعیت رو چک کن
-    setInterval(async () => {
-        const result = await callServer('getGameState');
-        if (result.success) {
-            gameData.status = result.status;
-            gameData.current_turn = result.current_turn;
-            
-            // اگر نوبت عوض شده
-            if (result.current_turn === `player${gameData.player_number}`) {
-                console.log("نوبت شماست!");
-            }
-        }
-    }, 30000);
-}
-
 /* ======================================= */
 /* 🚀 مقداردهی اولیه بازی                  */
 /* ======================================= */
 
-window.addEventListener('DOMContentLoaded', async () => {
-    console.log("صفحه بازی بارگذاری شد");
-    
-    // اول UI رو بساز
+window.addEventListener('DOMContentLoaded', () => {
     renderScoreBoard();
     renderDice();
     updateTurnDisplay();
-    
-    // سپس وضعیت بازی رو از سرور بگیر
-    await loadGameFromServer();
-    
-    // تنظیم رفرش خودکار
-    setupAutoRefresh();
+    startTimer();
 });
 </script>
 </body>
 
 </html>
+
+
+
+
+
+
+
+
 
 
 
