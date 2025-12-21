@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dice Party - نسخه رنگارنگ</title>
+<title>Dice Party - Online Multiplayer</title>
 <style>
     /* ======================================= */
-    /* 🎨 بخش استایل - ظاهر کلی بازی           */
+    /* 🎨 GAME STYLES - MODERN DESIGN           */
     /* ======================================= */
     
-    /* بدنه اصلی صفحه */
+    /* Main body */
     body {
-        font-family: 'Vazirmatn', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -24,7 +24,7 @@
         overflow-x: hidden;
     }
 
-    /* ذرات معلق در پس‌زمینه */
+    /* Background particles */
     body::before {
         content: '';
         position: fixed;
@@ -38,7 +38,7 @@
         z-index: -1;
     }
 
-    /* کانتینر اصلی بازی */
+    /* Game container */
     #game-container {
         display: flex;
         flex-direction: column;
@@ -49,75 +49,72 @@
     }
 
     /* ======================================= */
-    /* 🎮 بخش پلیرها و تایمر - با رنگ‌بندی جدید */
+    /* 🎮 PLAYERS & TIMER - NEW DESIGN          */
     /* ======================================= */
     
-    /* ردیف بالایی: دو پلیر */
-        /* ردیف بالایی: دو پلیر */
+    /* Top wrapper */
     #top-wrapper {
         display: flex;
-        gap: 5px;  /* از 15px به 5px */
-        justify-content: space-between;  /* تغییر به space-between */
+        gap: 5px;
+        justify-content: space-between;
         width: 100%;
-        padding: 0 5px;  /* اضافه کردم */
+        padding: 0 5px;
     }
 
-    /* جعبه هر پلیر */
-        /* جعبه هر پلیر */
-        /* جعبه هر پلیر */
+    /* Each player box */
     .player-box {
-        width: 45%;  /* تغییر اصلی: از 192px به 45% */
-        min-width: 130px;  /* حداقل عرض */
-        max-width: 150px;  /* حداکثر عرض */
+        width: 45%;
+        min-width: 130px;
+        max-width: 150px;
         background: rgba(30, 30, 46, 0.9);
-        padding: 8px 10px;  /* کاهش بیشتر */
-        border-radius: 8px;  /* کاهش از 10px */
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);  /* کاهش */
+        padding: 8px 10px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 4px;  /* کاهش بیشتر */
+        gap: 4px;
         transition: all 0.3s ease;
     }
 
-    /* پلیر فعال (نوبتش است) */
+    /* Active player */
     .player-box.active-player {
         transform: scale(1.03);
         animation: glowEffect 2s infinite alternate;
     }
 
-    /* پلیر 1 - رنگ زرد طلایی */
+    /* Player 1 - Golden */
     .player-box.player1 {
-        border: 2px solid #FFD700; /* طلایی */
+        border: 2px solid #FFD700;
         box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
     }
     .player-box.player1.active-player {
         box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
     }
 
-    /* پلیر 2 - رنگ سبز */
+    /* Player 2 - Green */
     .player-box.player2 {
-        border: 2px solid #00FF7F; /* سبز بهاری */
+        border: 2px solid #00FF7F;
         box-shadow: 0 0 15px rgba(0, 255, 127, 0.3);
     }
     .player-box.player2.active-player {
         box-shadow: 0 0 25px rgba(0, 255, 127, 0.6);
     }
 
-    /* افکت درخشش برای پلیر فعال */
+    /* Glow effect for active player */
     @keyframes glowEffect {
         0% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); }
         100% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.7); }
     }
 
-    /* پلیر غیرفعال */
+    /* Inactive player */
     .player-box.inactive {
         opacity: 0.6;
         filter: grayscale(40%);
         transform: scale(0.98);
     }
 
-    /* عنوان پلیر */
+    /* Player title */
     .player-title {
         font-size: 16px;
         font-weight: bold;
@@ -126,29 +123,29 @@
         gap: 7px;
     }
 
-    /* رنگ عنوان هر پلیر */
+    /* Player title colors */
     .player1 .player-title {
-        color: #FFD700; /* طلایی */
+        color: #FFD700;
         text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
     }
     .player2 .player-title {
-        color: #00FF7F; /* سبز */
+        color: #00FF7F;
         text-shadow: 0 0 8px rgba(0, 255, 127, 0.5);
     }
 
-    /* آیکون پلیرها */
+    /* Player icons */
     .player1 .player-title::before {
-        content: '👑'; /* تاج برای پلیر 1 */
+        content: '👑';
     }
     .player2 .player-title::before {
-        content: '⚔️'; /* شمشیر برای پلیر 2 */
+        content: '⚔️';
     }
 
     /* ======================================= */
-    /* ⏱️ بخش تایمر - با رنگ‌بندی جدید         */
+    /* ⏱️ TIMER SECTION                         */
     /* ======================================= */
     
-    /* نمایشگر تایمر */
+    /* Timer display */
     .player-timer {
         font-size: 18px;
         font-weight: bold;
@@ -163,37 +160,37 @@
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
     }
 
-    /* انیمیشن تپش */
+    /* Pulse animation */
     @keyframes pulse {
         0%, 100% { transform: scale(1); }
         50% { transform: scale(1.05); }
     }
 
-    /* تایمر پلیر 1 - زرد */
+    /* Player 1 timer - Yellow */
     .player1 .player-timer {
-        background: linear-gradient(135deg, #FFD700, #FFA500); /* طلایی به نارنجی */
+        background: linear-gradient(135deg, #FFD700, #FFA500);
         box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
     }
 
-    /* تایمر پلیر 2 - سبز */
+    /* Player 2 timer - Green */
     .player2 .player-timer {
-        background: linear-gradient(135deg, #00FF7F, #00CC66); /* سبز به سبز تیره */
+        background: linear-gradient(135deg, #00FF7F, #00CC66);
         box-shadow: 0 4px 15px rgba(0, 255, 127, 0.4);
     }
 
-    /* تایمر فعال (پلیر جاری) */
+    /* Active timer */
     .player-timer.active {
         animation: heartbeat 1s infinite;
         font-weight: 900;
     }
 
-    /* انیمیشن تپش قلب */
+    /* Heartbeat animation */
     @keyframes heartbeat {
         0%, 100% { transform: scale(1); }
         50% { transform: scale(1.1); }
     }
 
-    /* حالت هشدار (10 ثانیه آخر) */
+    /* Warning mode (last 10 seconds) */
     .player-timer.warning {
         background: linear-gradient(135deg, #FF3333, #CC0000) !important;
         color: white !important;
@@ -202,19 +199,19 @@
         box-shadow: 0 0 25px rgba(255, 0, 0, 0.7) !important;
     }
 
-    /* انیمیشن هشدار 10 ثانیه آخر */
+    /* Warning pulse animation */
     @keyframes warningPulse {
         0% { transform: scale(1); }
         100% { transform: scale(1.15); }
     }
 
     /* ======================================= */
-    /* 📊 بخش جدول امتیازات - طرح جدید         */
+    /* 📊 SCORE BOARD - NEW DESIGN             */
     /* ======================================= */
     
-    /* کانتینر جدول امتیازات */
+    /* Score board container */
     #score-board {
-        width: 460px; /* کمی بزرگتر برای طرح جدید */
+        width: 460px;
         background: rgba(30, 30, 46, 0.9);
         padding: 15px;
         border-radius: 10px;
@@ -222,7 +219,7 @@
         border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    /* هدر جدول */
+    /* Score header */
     .score-header {
         display: flex;
         justify-content: space-between;
@@ -231,54 +228,43 @@
         border-bottom: 2px solid rgba(255, 255, 255, 0.1);
     }
 
-    /* عنوان هر ستون 
+    /* Column titles */
     .score-column-title {
-        font-size: 14px;
+        font-size: 18px;
         font-weight: bold;
-        padding: 8px 15px;
-        border-radius: 6px;
+        padding: 6px 1px;
+        border-radius: 1px;
         flex: 1;
         text-align: center;
-        margin: 0 5px;
-    }*/
-	.score-column-title {
-    font-size: 18px;  /* از 14px به 11px */
-    font-weight: bold;
-    padding: 6px 1px;  /* از 8px 15px به 5px 8px */
-    border-radius: 1px;
-    flex: 1;
-    text-align: center;
-    margin: 0 2px;  /* از 5px به 2px */
-    min-width: 0;  /* اضافه کردم */
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
+        margin: 0 2px;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 
-
-
-    /* عنوان ستون پلیر 1 */
+    /* Player 1 column title */
     .score-column-title.player1 {
         background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1));
         color: #FFD700;
         border: 1px solid rgba(255, 215, 0, 0.3);
     }
 
-    /* عنوان ستون پلیر 2 */
+    /* Player 2 column title */
     .score-column-title.player2 {
         background: linear-gradient(135deg, rgba(0, 255, 127, 0.2), rgba(0, 204, 102, 0.1));
         color: #00FF7F;
         border: 1px solid rgba(0, 255, 127, 0.3);
     }
 
-    /* عنوان ستون تاس */
+    /* Dice column title */
     .score-column-title.dice {
         background: linear-gradient(135deg, rgba(138, 43, 226, 0.2), rgba(75, 0, 130, 0.1));
         color: #8A2BE2;
         border: 1px solid rgba(138, 43, 226, 0.3);
     }
 
-    /* هر ردیف امتیاز */
+    /* Each score row */
     .score-row {
         display: flex;
         align-items: center;
@@ -292,7 +278,7 @@
         position: relative;
     }
 
-    /* افکت هاور روی ردیف */
+    /* Hover effect on row */
     .score-row:hover {
         background: linear-gradient(90deg, 
             rgba(138, 43, 226, 0.1), 
@@ -302,7 +288,7 @@
         transform: translateY(-2px);
     }
 
-    /* ردیف انتخاب شده */
+    /* Selected row */
     .score-row.selected {
         background: linear-gradient(90deg, 
             rgba(255, 215, 0, 0.15), 
@@ -313,7 +299,7 @@
         border: 1px solid rgba(255, 215, 0, 0.4);
     }
 
-    /* سطلون تصویر تاس (وسط) */
+    /* Dice column (middle) */
     .score-column.dice {
         flex: 1;
         display: flex;
@@ -321,7 +307,7 @@
         align-items: center;
     }
 
-    /* ستون امتیاز */
+    /* Score column */
     .score-column {
         flex: 1;
         display: flex;
@@ -330,7 +316,7 @@
         margin: 0 5px;
     }
 
-    /* تصویر تاس کوچک */
+    /* Mini dice image */
     .mini-dice {
         width: 40px;
         height: 40px;
@@ -340,32 +326,31 @@
         filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3));
     }
 
-    /* افکت هاور روی تاس */
+    /* Hover effect on dice */
     .score-row:hover .mini-dice {
         transform: scale(1.15) rotate(10deg);
         filter: drop-shadow(0 5px 10px rgba(255, 215, 0, 0.5));
     }
 
-    /* جعبه نمایش عدد (امتیاز) */
+    /* Value box (score display) */
     .value-box {
-    width: 60px;  /* از 85px به 60px تغییر دادم */
-    padding: 6px 8px;  /* از 8px 10px به 6px 8px تغییر دادم */
-    font-size: 18px;  /* از 14px به 12px تغییر دادم */
-    border-radius: 8px;
-    border: none;
-    outline: none;
-    text-align: center;
-    background: rgba(40, 40, 60, 0.9);
-    color: #fff;
-    direction: ltr;
-    font-weight: bold;
-    font-family: 'Courier New', monospace;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
-}
+        width: 60px;
+        padding: 6px 8px;
+        font-size: 18px;
+        border-radius: 8px;
+        border: none;
+        outline: none;
+        text-align: center;
+        background: rgba(40, 40, 60, 0.9);
+        color: #fff;
+        direction: ltr;
+        font-weight: bold;
+        font-family: 'Courier New', monospace;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
 
-
-    /* امتیاز ثبت شده توسط پلیر 1 */
+    /* Confirmed score by Player 1 */
     .value-box.confirmed.player1 {
         background: linear-gradient(135deg, #FFD700, #FFA500);
         color: #000;
@@ -374,7 +359,7 @@
         font-weight: 900;
     }
 
-    /* امتیاز ثبت شده توسط پلیر 2 */
+    /* Confirmed score by Player 2 */
     .value-box.confirmed.player2 {
         background: linear-gradient(135deg, #00FF7F, #00CC66);
         color: #000;
@@ -383,7 +368,7 @@
         font-weight: 900;
     }
 
-    /* جعبه قفل شده (غیرقابل تغییر) */
+    /* Locked box (unchangeable) */
     .value-box.locked {
         opacity: 0.5;
         background: rgba(30, 30, 30, 0.8);
@@ -391,10 +376,10 @@
     }
 
     /* ======================================= */
-    /* 🎲 بخش اصلی بازی (تاس‌ها و دکمه‌ها)     */
+    /* 🎲 MAIN GAME AREA (DICE & BUTTONS)      */
     /* ======================================= */
     
-    /* جعبه اصلی مرکزی */
+    /* Main game box */
     #main-box {
         background: rgba(30, 30, 46, 0.9);
         padding: 15px;
@@ -407,7 +392,7 @@
         border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    /* کانتینر تاس‌های سه‌بعدی */
+    /* 3D dice container */
     #dice-container {
         display: flex;
         justify-content: center;
@@ -417,8 +402,7 @@
         min-height: 54px;
     }
 
-    /* صحنه هر تاس */
-        /* صحنه هر تاس */
+    /* Each dice scene */
     .scene {
         perspective: 600px;
         width: 51px;
@@ -428,19 +412,19 @@
         justify-content: center;
         cursor: pointer;
         position: relative;
-        border-radius: 8px;  /* اضافه کردم */
-        background: rgba(255, 255, 255, 0.05);  /* اضافه کردم */
-        padding: 2px;  /* اضافه کردم */
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 2px;
     }
 
-    /* تاس قفل شده */
+    /* Locked dice */
     .scene.locked {
         border: 2px solid rgba(255, 215, 0, 0.8);
         border-radius: 8px;
         box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
     }
 
-    /* آیکون قفل روی تاس */
+    /* Lock icon on dice */
     .scene.locked::before {
         content: '🔒';
         position: absolute;
@@ -451,7 +435,7 @@
         filter: drop-shadow(0 0 5px gold);
     }
 
-    /* مکعب سه‌بعدی تاس */
+    /* 3D cube */
     .cube {
         width: 100%;
         height: 100%;
@@ -461,8 +445,7 @@
         transform: rotateX(-20deg) rotateY(20deg);
     }
 
-    /* هر وجه تاس */
-        /* هر وجه تاس */
+    /* Each face of dice */
     .face {
         position: absolute;
         width: 100%;
@@ -476,10 +459,11 @@
         background: linear-gradient(145deg, #2a0845, #1a0a3e);
         backface-visibility: hidden;
         overflow: hidden;
-        border: 2px solid rgba(255, 255, 255, 0.3);  /* تغییر از 0.15 به 0.3 */
-        box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2);  /* اضافه کردم */
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2);
     }
-    /* نقاط روی وجه تاس */
+
+    /* Dice pips */
     .pip {
         width: 7px;
         height: 7px;
@@ -489,7 +473,7 @@
         box-shadow: 0 0 6px currentColor;
     }
 
-    /* رنگ نقاط هر وجه */
+    /* Pip colors for each face */
     .face.f1 .pip { background:#ff0033 !important; color:#ff0033 }
     .face.f2 .pip { background:#ffee55 !important; color:#ffee55 }
     .face.f3 .pip { background:#4ecbff !important; color:#4ecbff }
@@ -497,7 +481,7 @@
     .face.f5 .pip { background:#ff4ebd !important; color:#ff4ebd }
     .face.f6 .pip { background:#4efbff !important; color:#4efbff }
 
-    /* گرید 3x3 برای چیدمان نقاط */
+    /* 3x3 grid for pip arrangement */
     .grid3 {
         width: 80%;
         height: 80%;
@@ -509,7 +493,7 @@
         justify-items: center;
     }
 
-    /* موقعیت هر وجه در فضای سه‌بعدی */
+    /* Face positions in 3D space */
     .f1 { transform: rotateX(90deg) translateZ(25.5px); }
     .f2 { transform: rotateY(90deg) translateZ(25.5px); }
     .f3 { transform: rotateY(0deg) translateZ(25.5px); }
@@ -518,10 +502,10 @@
     .f6 { transform: rotateX(-90deg) translateZ(25.5px); }
 
     /* ======================================= */
-    /* 🎮 بخش دکمه‌های بازی                   */
+    /* 🎮 GAME BUTTONS                         */
     /* ======================================= */
     
-    /* ردیف دکمه‌ها */
+    /* Button row */
     #button-row {
         display: flex;
         gap: 18px;
@@ -530,7 +514,7 @@
         justify-content: center;
     }
 
-    /* دکمه عمومی بازی */
+    /* Game buttons */
     .game-btn {
         padding: 10px 30px;
         font-size: 20px;
@@ -541,12 +525,11 @@
         transition: all 0.3s ease;
         min-width: 90px;
         text-align: center;
-        font-family: 'Vazirmatn', sans-serif;
         position: relative;
         overflow: hidden;
     }
 
-    /* افکت درخشان برای دکمه‌ها */
+    /* Shine effect for buttons */
     .game-btn::before {
         content: '';
         position: absolute;
@@ -562,7 +545,7 @@
         left: 100%;
     }
 
-    /* دکمه رول (تاس ریختن) */
+    /* Roll button */
     #roll-btn {
         background: linear-gradient(135deg, #FF0080, #FF3399);
         color: white;
@@ -570,7 +553,7 @@
         border: 2px solid rgba(255, 255, 255, 0.2);
     }
 
-    /* دکمه پلی (ثبت امتیاز) */
+    /* Play button */
     #play-btn {
         background: linear-gradient(135deg, #6600cc, #9933ff);
         color: white;
@@ -578,13 +561,13 @@
         border: 2px solid rgba(255, 255, 255, 0.2);
     }
 
-    /* افکت هاور دکمه‌ها */
+    /* Button hover effect */
     .game-btn:hover {
         transform: translateY(-3px);
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     }
 
-    /* دکمه غیرفعال */
+    /* Disabled button */
     .game-btn:disabled {
         opacity: 0.5;
         cursor: not-allowed;
@@ -593,10 +576,10 @@
     }
 
     /* ======================================= */
-    /* 🏆 بخش نتایج پایانی                    */
+    /* 🏆 FINAL RESULTS                        */
     /* ======================================= */
     
-    /* صفحه نتایج */
+    /* Results screen */
     .results-screen {
         background: rgba(20, 20, 40, 0.95);
         padding: 24px;
@@ -610,7 +593,7 @@
         backdrop-filter: blur(10px);
     }
 
-    /* عنوان صفحه نتایج */
+    /* Results title */
     .results-title {
         font-size: 22px;
         font-weight: bold;
@@ -620,12 +603,10 @@
     }
 
     /* ======================================= */
-    /* 📱 بخش رسپانسیو (موبایل و تبلت)        */
+    /* 📱 RESPONSIVE DESIGN (MOBILE & TABLET)  */
     /* ======================================= */
     
-    /* تبلت و موبایل‌های بزرگ */
-        /* تبلت و موبایل‌های بزرگ */
-        /* تبلت و موبایل‌های بزرگ */
+    /* Tablet and large mobile */
     @media (max-width: 768px) {
         body {
             padding: 8px;
@@ -633,25 +614,25 @@
         
         #top-wrapper {
             flex-direction: row;
-            flex-wrap: nowrap;  /* تغییر به nowrap */
-            justify-content: space-between;  /* تغییر به space-between */
+            flex-wrap: nowrap;
+            justify-content: space-between;
             gap: 5px;
             width: 100%;
         }
         
         .player-box {
-            width: 48%;  /* ساده‌تر */
+            width: 48%;
             min-width: 140px;
             padding: 6px 8px;
-            flex: 1;  /* اضافه کردم */
+            flex: 1;
         }
         
         .player-title {
-            font-size: 14px;  /* اضافه کردم */
+            font-size: 14px;
         }
         
         .player-timer {
-            font-size: 12px;  /* اضافه کردم */
+            font-size: 12px;
             padding: 3px 6px;
             min-width: 28px;
         }
@@ -672,7 +653,8 @@
             font-size: 13px;
             padding: 5px 9px;
         }
-		.value-box {
+        
+        .value-box {
             width: 75px;
             padding: 8px 10px;
             font-size: 16px;
@@ -684,9 +666,10 @@
         }
 
         .pip {
-            width: 7px;  /* افزایش از 5px */
-            height: 7px;  /* افزایش از 5px */
-        } 
+            width: 7px;
+            height: 7px;
+        }
+        
         #main-box {
             width: 100%;
             max-width: 100%;
@@ -706,8 +689,7 @@
             padding: 14px 28px;
             font-size: 18px;
             min-width: 120px;
-			 width: auto;
-
+            width: auto;
         }
         
         .results-screen {
@@ -715,11 +697,8 @@
             padding: 15px;
         }
     }
-    /* موبایل‌های کوچک */
-    
 
-
-    /* انیمیشن‌های اضافی */
+    /* Additional animations */
     @keyframes shake {
         0%, 100% { transform: translateX(0); }
         10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
@@ -732,7 +711,7 @@
         100% { transform: scale(1); }
     }
 
-    /* نشانگر نوبت */
+    /* Turn indicator */
     .turn-indicator {
         position: absolute;
         top: -10px;
@@ -753,7 +732,7 @@
         display: block;
     }
 
-    /* پیام نوبت از دست رفته */
+    /* Turn lost message */
     .turn-lost-message {
         position: fixed;
         top: 50%;
@@ -778,65 +757,61 @@
         100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
     }
 </style>
-<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
 </head>
 <body>
 
 <!-- ======================================= -->
-<!-- 🏗️ ساختار HTML بازی                    -->
+<!-- 🏗️ GAME HTML STRUCTURE                  -->
 <!-- ======================================= -->
 
 <div id="game-container">
-    <!-- بخش بالایی: اطلاعات پلیرها -->
+    <!-- Top section: Player info -->
     <div id="top-wrapper">
-        <!-- پلیر 1 -->
+        <!-- Player 1 -->
         <div id="playerBox1" class="player-box player1 active-player">
-            <div class="turn-indicator">نوبت شما</div>
-            <div class="player-title">بازیکن ۱</div>
-            <div id="player1Timer" class="player-timer active">۳۰</div>
+            <div class="turn-indicator">Your Turn</div>
+            <div class="player-title">Player 1</div>
+            <div id="player1Timer" class="player-timer active">30</div>
         </div>
-        <!-- پلیر 2 -->
+        <!-- Player 2 -->
         <div id="playerBox2" class="player-box player2 inactive">
-            <div class="turn-indicator">نوبت شما</div>
-            <div class="player-title">بازیکن ۲</div>
-            <div id="player2Timer" class="player-timer">۳۰</div>
+            <div class="turn-indicator">Your Turn</div>
+            <div class="player-title">Player 2</div>
+            <div id="player2Timer" class="player-timer">30</div>
         </div>
     </div>
 
-    <!-- جدول امتیازات با طرح جدید -->
+    <!-- Score board with new design -->
     <div id="score-board">
         <div class="score-header">
-            <div class="score-column-title player1">بازیکن ۱</div>
-            <div class="score-column-title dice">تاس</div>
-            <div class="score-column-title player2">بازیکن ۲</div>
+            <div class="score-column-title player1">Player 1</div>
+            <div class="score-column-title dice">Dice</div>
+            <div class="score-column-title player2">Player 2</div>
         </div>
-        <!-- ردیف‌ها توسط جاوااسکریپت ساخته می‌شوند -->
+        <!-- Rows will be created by JavaScript -->
     </div>
 
-    <!-- بخش اصلی بازی -->
+    <!-- Main game area -->
     <div id="main-box">
-        <!-- تاس‌های سه‌بعدی -->
+        <!-- 3D Dice -->
         <div id="dice-container"></div>
 
-        <!-- دکمه‌های بازی -->
+        <!-- Game buttons -->
         <div id="button-row">
-            <button id="roll-btn" class="game-btn">تاس بریز</button>
-            <button id="play-btn" class="game-btn" disabled>ثبت کن</button>
+            <button id="roll-btn" class="game-btn">Roll Dice</button>
+            <button id="play-btn" class="game-btn" disabled>Confirm</button>
         </div>
     </div>
 
-    <!-- صفحه نتایج -->
+    <!-- Results screen -->
     <div id="results-screen" class="results-screen">
-        <div class="results-title">🏆 نتایج نهایی</div>
+        <div class="results-title">🏆 Final Results</div>
         <div class="results-columns" id="resultsColumns"></div>
-        <button id="restart-btn" class="game-btn" style="margin-top: 18px; background: linear-gradient(135deg, #00cc66, #00994d);">
-            بازی مجدد
-        </button>
     </div>
 </div>
 
 <!-- ======================================= -->
-<!-- 🔊 بخش صداهای بازی                      -->
+<!-- 🔊 GAME SOUNDS                           -->
 <!-- ======================================= -->
 
 <audio id="diceSound" src="https://raw.githubusercontent.com/nonacoin/nona-game/main/sounds/tasandakhtan.wav"></audio>
@@ -846,11 +821,13 @@
 <audio id="timeoutSound" src="https://raw.githubusercontent.com/nonacoin/nona-game/main/sounds/sabt.wav"></audio>
 <audio id="warningSound" src="https://raw.githubusercontent.com/nonacoin/nona-game/main/sounds/ghofl.wav"></audio>
 <audio id="tickSound" src="https://raw.githubusercontent.com/nonacoin/nona-game/main/sounds/ghofl.wav"></audio>
-<script>
-/* ======================================= */
-/* 🎯 متغیرهای اصلی بازی                   */
-/* ======================================= */
 
+<script>
+// ======================================= //
+// 🎯 MAIN GAME VARIABLES                   //
+// ======================================= //
+
+// Game sounds
 const diceSound = document.getElementById('diceSound');
 const lockSound = document.getElementById('lockSound');
 const selectSound = document.getElementById('selectSound');
@@ -859,34 +836,42 @@ const timeoutSound = document.getElementById('timeoutSound');
 const warningSound = document.getElementById('warningSound');
 const tickSound = document.getElementById('tickSound');
 
-// تنظیمات صداها
+// Set sound volumes
 [diceSound, lockSound, selectSound, confirmSound, timeoutSound, warningSound, tickSound].forEach(sound => {
     sound.volume = 0.7;
     sound.preload = 'auto';
 });
 
+// Supabase configuration - REPLACE WITH YOUR OWN
+const SUPABASE_CONFIG = {
+    URL: "https://xouwoemiyxnugontsles.supabase.co",
+    ANON_KEY: "sb_publishable_MFoTbKuCDjhVCs1-xvKNag_UwhV0tF-",
+    FUNCTIONS_URL: "https://xouwoemiyxnugontsles.supabase.co/functions/v1/create-game"
+};
+
+// Base URL for dice images
 const baseURL = "https://raw.githubusercontent.com/nonacoin/main/main/Dice/";
 
-/* ======================================= */
-/* 🎲 توابع کمکی تاس                       */
-/* ======================================= */
+// ======================================= //
+// 🎲 DICE HELPER FUNCTIONS                 //
+// ======================================= //
 
-function rand1to6(){ 
+function rand1to6() { 
     return Math.floor(Math.random() * 6) + 1; 
 }
 
 const facePips = {
-  1: [5], 2: [1,9], 3: [1,5,9], 4: [1,3,7,9], 5: [1,3,5,7,9], 6: [1,3,4,6,7,9]
+    1: [5], 2: [1,9], 3: [1,5,9], 4: [1,3,7,9], 5: [1,3,5,7,9], 6: [1,3,4,6,7,9]
 };
 
 const rotations = {
-  1: {x: -90, y: 0}, 2: {x: 0, y: -90}, 3: {x: 0, y: 0},
-  4: {x: 0, y: 180}, 5: {x: 0, y: 90}, 6: {x: 90, y: 0}
+    1: {x: -90, y: 0}, 2: {x: 0, y: -90}, 3: {x: 0, y: 0},
+    4: {x: 0, y: 180}, 5: {x: 0, y: 90}, 6: {x: 90, y: 0}
 };
 
-/* ======================================= */
-/* 🎮 وضعیت فعلی بازی                      */
-/* ======================================= */
+// ======================================= //
+// 🎮 CURRENT GAME STATE                    //
+// ======================================= //
 
 let gameState = {
     currentPlayer: 1,
@@ -898,7 +883,9 @@ let gameState = {
         player2: Array(6).fill(null)
     },
     gameFinished: false,
-    specialBonuses: { player1: 0, player2: 0 }
+    specialBonuses: { player1: 0, player2: 0 },
+    roomId: null,
+    playerNames: { player1: "Player 1", player2: "Player 2" }
 };
 
 let gameStats = {
@@ -906,15 +893,15 @@ let gameStats = {
     player2: { totalScore: 0, gamesPlayed: 0, wins: 0, losses: 0, totalSpecialBonus: 0 }
 };
 
-/* ======================================= */
-/* ⏱️ سیستم تایمر - اصلاح شده               */
-/* ======================================= */
+// ======================================= //
+// ⏱️ TIMER SYSTEM - UPDATED                //
+// ======================================= //
 
 let timerInterval = null;
 let timeLeft = 30;
 const TOTAL_TIME = 30;
 let warningPlayed = false;
-let isTimeUpProcessing = false; // برای جلوگیری از اجرای همزمان timeUp
+let isTimeUpProcessing = false;
 
 function startTimer() {
     if (gameState.gameFinished) return;
@@ -933,10 +920,10 @@ function startTimer() {
         timeLeft--;
         updateTimerDisplay();
         
-        // تپش قلب با هر ثانیه
+        // Heartbeat with each second
         pulseTimer();
         
-        // 10 ثانیه آخر
+        // Last 10 seconds
         if (timeLeft <= 10) {
             enableWarningMode();
             if (timeLeft <= 5 && !warningPlayed) {
@@ -971,13 +958,13 @@ function enableWarningMode() {
     
     if (timeLeft <= 10) {
         tickSound.currentTime = 0;
-        tickSound.play().catch(e => console.log("خطا در پخش صدا"));
+        tickSound.play().catch(e => console.log("Sound error"));
     }
 }
 
 function playWarningSound() {
     warningSound.currentTime = 0;
-    warningSound.play().catch(e => console.log("خطا در پخش صدا"));
+    warningSound.play().catch(e => console.log("Sound error"));
 }
 
 function updateTimerDisplay() {
@@ -1010,14 +997,13 @@ function updateTimerDisplay() {
 }
 
 function timeUp() {
-    if (isTimeUpProcessing) return; // اگر در حال پردازش هستیم، دوباره اجرا نکن
+    if (isTimeUpProcessing) return;
     isTimeUpProcessing = true;
     
     clearInterval(timerInterval);
     timeoutSound.currentTime = 0;
     timeoutSound.play();
     
-    // نمایش پیام نوبت از دست رفته
     showTurnLostMessage();
     
     setTimeout(() => {
@@ -1027,13 +1013,13 @@ function timeUp() {
             autoSelectAndConfirm();
         }
         isTimeUpProcessing = false;
-    }, 1000); // یک ثانیه تأخیر برای نمایش پیام
+    }, 1000);
 }
 
 function showTurnLostMessage() {
     const message = document.createElement('div');
     message.className = 'turn-lost-message';
-    message.textContent = `⏰ زمان بازیکن ${gameState.currentPlayer} تمام شد! نوبت از دست رفت.`;
+    message.textContent = `⏰ Player ${gameState.currentPlayer} time's up! Turn lost.`;
     document.body.appendChild(message);
     
     setTimeout(() => {
@@ -1043,7 +1029,6 @@ function showTurnLostMessage() {
     }, 2000);
 }
 
-/* ثبت خودکار دسته انتخاب شده */
 function autoConfirmSelection() {
     const { player, rowIndex } = gameState.selectedCategory;
     const playerKey = `player${player}`;
@@ -1051,11 +1036,9 @@ function autoConfirmSelection() {
     const score = potentialScores[rowIndex];
     gameState.confirmedCategories[playerKey][rowIndex] = score;
     
-    // پخش صدای ثبت
     confirmSound.currentTime = 0;
     confirmSound.play();
     
-    // نمایش پیام ثبت خودکار
     showAutoConfirmMessage(player, rowIndex, score);
     
     setTimeout(() => {
@@ -1069,7 +1052,7 @@ function showAutoConfirmMessage(player, rowIndex, score) {
     const message = document.createElement('div');
     message.className = 'turn-lost-message';
     message.style.background = 'linear-gradient(135deg, #FFD700, #FFA500)';
-    message.textContent = `✅ امتیاز ${score} برای بازیکن ${player} ثبت شد`;
+    message.textContent = `✅ Score ${score} confirmed for Player ${player}`;
     document.body.appendChild(message);
     
     setTimeout(() => {
@@ -1079,13 +1062,11 @@ function showAutoConfirmMessage(player, rowIndex, score) {
     }, 1500);
 }
 
-/* انتخاب و ثبت خودکار (وقتی کاربر چیزی انتخاب نکرده) */
 function autoSelectAndConfirm() {
     const playerKey = `player${gameState.currentPlayer}`;
     const potentialScores = calculatePotentialScores();
     let availableIndex = -1;
     
-    // پیدا کردن اولین دسته خالی
     for (let i = 0; i < 6; i++) {
         if (gameState.confirmedCategories[playerKey][i] === null) { 
             availableIndex = i; 
@@ -1093,15 +1074,13 @@ function autoSelectAndConfirm() {
         }
     }
     
-    // اگر دسته خالی پیدا شد، امتیاز 0 ثبت کن
     if (availableIndex !== -1) {
         gameState.confirmedCategories[playerKey][availableIndex] = 0;
         
-        // نمایش پیام
         const message = document.createElement('div');
         message.className = 'turn-lost-message';
         message.style.background = 'linear-gradient(135deg, #FF3333, #CC0000)';
-        message.textContent = `❌ بازیکن ${gameState.currentPlayer} امتیازی ثبت نکرد! (امتیاز 0 ثبت شد)`;
+        message.textContent = `❌ Player ${gameState.currentPlayer} didn't confirm any score! (0 points added)`;
         document.body.appendChild(message);
         
         setTimeout(() => {
@@ -1117,16 +1096,16 @@ function autoSelectAndConfirm() {
     }, 1000);
 }
 
-/* ======================================= */
-/* 🎲 مدیریت تاس‌ها و امتیازات              */
-/* ======================================= */
+// ======================================= //
+// 🎲 DICE MANAGEMENT & SCORING            //
+// ======================================= //
 
 let diceData = [
-  { id: 0, locked: false, value: rand1to6() },
-  { id: 1, locked: false, value: rand1to6() },
-  { id: 2, locked: false, value: rand1to6() },
-  { id: 3, locked: false, value: rand1to6() },
-  { id: 4, locked: false, value: rand1to6() }
+    { id: 0, locked: false, value: rand1to6() },
+    { id: 1, locked: false, value: rand1to6() },
+    { id: 2, locked: false, value: rand1to6() },
+    { id: 3, locked: false, value: rand1to6() },
+    { id: 4, locked: false, value: rand1to6() }
 ];
 
 let isRolling = false;
@@ -1141,13 +1120,12 @@ function calculatePotentialScores() {
     return scores;
 }
 
-/* ======================================= */
-/* 🏗️ رندر جدول امتیازات - نسخه جدید       */
-/* ======================================= */
+// ======================================= //
+// 🏗️ RENDER SCORE BOARD - UPDATED          //
+// ======================================= //
 
 function renderScoreBoard() {
     const container = document.getElementById('score-board');
-    // هدر قبلاً در HTML تعریف شده، فقط ردیف‌ها را اضافه می‌کنیم
     const existingHeader = container.querySelector('.score-header');
     container.innerHTML = '';
     container.appendChild(existingHeader);
@@ -1158,7 +1136,7 @@ function renderScoreBoard() {
         row.dataset.category = i-1;
         row.dataset.value = i;
 
-        // ستون پلیر 1
+        // Player 1 column
         const col1 = document.createElement('div');
         col1.className = 'score-column';
         
@@ -1170,18 +1148,18 @@ function renderScoreBoard() {
         input1.value = '0';
         col1.appendChild(input1);
 
-        // ستون تاس (وسط)
+        // Dice column (middle)
         const colDice = document.createElement('div');
         colDice.className = 'score-column dice';
         
         const img = document.createElement('img');
         img.src = baseURL + i + '.png';
         img.className = 'mini-dice';
-        img.alt = `تاس ${i}`;
-        img.title = `برای ثبت امتیاز ${i} کلیک کنید`;
+        img.alt = `Dice ${i}`;
+        img.title = `Click to score category ${i}`;
         colDice.appendChild(img);
 
-        // ستون پلیر 2
+        // Player 2 column
         const col2 = document.createElement('div');
         col2.className = 'score-column';
         
@@ -1197,7 +1175,7 @@ function renderScoreBoard() {
         row.appendChild(colDice);
         row.appendChild(col2);
 
-        // رویداد کلیک برای انتخاب دسته
+        // Click event for category selection
         row.addEventListener('click', () => {
             if (gameState.gameFinished) return;
             if (gameState.rollCount === 0) return;
@@ -1244,7 +1222,7 @@ function updateScoreDisplays() {
         const conf1 = gameState.confirmedCategories.player1[index];
         const conf2 = gameState.confirmedCategories.player2[index];
 
-        // پلیر 1
+        // Player 1
         if (conf1 !== null) {
             input1.value = conf1;
             input1.classList.add('confirmed','player1');
@@ -1260,7 +1238,7 @@ function updateScoreDisplays() {
             }
         }
 
-        // پلیر 2
+        // Player 2
         if (conf2 !== null) {
             input2.value = conf2;
             input2.classList.add('confirmed','player2');
@@ -1278,165 +1256,165 @@ function updateScoreDisplays() {
     });
 }
 
-/* ======================================= */
-/* 🎲 رندر تاس‌های سه‌بعدی                  */
-/* ======================================= */
+// ======================================= //
+// 🎲 RENDER 3D DICE                        //
+// ======================================= //
 
 function renderDice() {
-  const container = document.getElementById('dice-container');
-  container.innerHTML = '';
+    const container = document.getElementById('dice-container');
+    container.innerHTML = '';
 
-  diceData.forEach((diceItem) => {
-    const scene = document.createElement('div');
-    scene.className = 'scene';
-    if (diceItem.locked) scene.classList.add('locked');
-    scene.dataset.id = diceItem.id;
+    diceData.forEach((diceItem) => {
+        const scene = document.createElement('div');
+        scene.className = 'scene';
+        if (diceItem.locked) scene.classList.add('locked');
+        scene.dataset.id = diceItem.id;
 
-    const cube = document.createElement('div');
-    cube.className = 'cube';
-    cube.id = `cube${diceItem.id}`;
+        const cube = document.createElement('div');
+        cube.className = 'cube';
+        cube.id = `cube${diceItem.id}`;
 
-    for (let f = 1; f <= 6; f++) {
-      const face = document.createElement('div');
-      face.className = `face f${f}`;
-      const grid = document.createElement('div');
-      grid.className = 'grid3';
-      grid.dataset.face = f;
+        for (let f = 1; f <= 6; f++) {
+            const face = document.createElement('div');
+            face.className = `face f${f}`;
+            const grid = document.createElement('div');
+            grid.className = 'grid3';
+            grid.dataset.face = f;
 
-      for(let j = 1; j <= 9; j++){
-        const slot = document.createElement('div');
-        slot.style.display = 'flex';
-        slot.style.alignItems = 'center';
-        slot.style.justifyContent = 'center';
-        if(facePips[f].includes(j)){
-          const pip = document.createElement('div');
-          pip.className = 'pip';
-          slot.appendChild(pip);
+            for(let j = 1; j <= 9; j++){
+                const slot = document.createElement('div');
+                slot.style.display = 'flex';
+                slot.style.alignItems = 'center';
+                slot.style.justifyContent = 'center';
+                if(facePips[f].includes(j)){
+                    const pip = document.createElement('div');
+                    pip.className = 'pip';
+                    slot.appendChild(pip);
+                }
+                grid.appendChild(slot);
+            }
+            face.appendChild(grid);
+            cube.appendChild(face);
         }
-        grid.appendChild(slot);
-      }
-      face.appendChild(grid);
-      cube.appendChild(face);
-    }
 
-    scene.appendChild(cube);
-    container.appendChild(scene);
+        scene.appendChild(cube);
+        container.appendChild(scene);
 
-    const rot = rotations[diceItem.value];
-    cube.style.transform = `rotateX(${rot.x}deg) rotateY(${rot.y}deg)`;
+        const rot = rotations[diceItem.value];
+        cube.style.transform = `rotateX(${rot.x}deg) rotateY(${rot.y}deg)`;
 
-    scene.addEventListener('click', () => {
-      if (isRolling) return;
-      if (gameState.rollCount === 0) return;
-      if (gameState.gameFinished) return;
+        scene.addEventListener('click', () => {
+            if (isRolling) return;
+            if (gameState.rollCount === 0) return;
+            if (gameState.gameFinished) return;
 
-      const idx = diceData.findIndex(d => d.id === diceItem.id);
-      if (idx === -1) return;
-      
-      diceData[idx].locked = !diceData[idx].locked;
+            const idx = diceData.findIndex(d => d.id === diceItem.id);
+            if (idx === -1) return;
+            
+            diceData[idx].locked = !diceData[idx].locked;
 
-      lockSound.currentTime = 0;
-      lockSound.play();
+            lockSound.currentTime = 0;
+            lockSound.play();
 
-      if (diceData[idx].locked) {
-        scene.classList.add('locked');
-      } else {
-        scene.classList.remove('locked');
-      }
-      
-      updateScoreDisplays();
+            if (diceData[idx].locked) {
+                scene.classList.add('locked');
+            } else {
+                scene.classList.remove('locked');
+            }
+            
+            updateScoreDisplays();
+        });
     });
-  });
 }
 
-/* ======================================= */
-/* 🎲 چرخش یک تاس                           */
-/* ======================================= */
+// ======================================= //
+// 🎲 ROLL SINGLE DICE                      //
+// ======================================= //
 
 function rollSingleDice(diceIndex) {
-  return new Promise((resolve) => {
-    const diceItem = diceData[diceIndex];
-    if (diceItem.locked) { resolve(); return; }
-    
-    const newValue = rand1to6();
-    diceItem.value = newValue;
-    
-    setTimeout(() => {
-      diceSound.currentTime = 0;
-      diceSound.play().catch(e => console.log("خطا در پخش صدا"));
-    }, diceIndex * 100);
-    
-    const cube = document.getElementById(`cube${diceIndex}`);
-    if (!cube) { resolve(); return; }
+    return new Promise((resolve) => {
+        const diceItem = diceData[diceIndex];
+        if (diceItem.locked) { resolve(); return; }
+        
+        const newValue = rand1to6();
+        diceItem.value = newValue;
+        
+        setTimeout(() => {
+            diceSound.currentTime = 0;
+            diceSound.play().catch(e => console.log("Sound error"));
+        }, diceIndex * 100);
+        
+        const cube = document.getElementById(`cube${diceIndex}`);
+        if (!cube) { resolve(); return; }
 
-    const rot = rotations[newValue];
-    const extraX = 360 * (2 + Math.floor(Math.random() * 2));
-    const extraY = 360 * (2 + Math.floor(Math.random() * 2));
+        const rot = rotations[newValue];
+        const extraX = 360 * (2 + Math.floor(Math.random() * 2));
+        const extraY = 360 * (2 + Math.floor(Math.random() * 2));
 
-    cube.style.transition = 'transform 1s cubic-bezier(.2,.9,.3,1)';
-    cube.style.transform = `rotateX(${rot.x + extraX}deg) rotateY(${rot.y + extraY}deg)`;
-
-    cube.addEventListener('transitionend', function handler(e) {
-      if (e.propertyName !== 'transform') return;
-      cube.removeEventListener('transitionend', handler);
-
-      cube.style.transition = 'none';
-      cube.style.transform = `rotateX(${rot.x}deg) rotateY(${rot.y}deg)`;
-
-      setTimeout(() => {
         cube.style.transition = 'transform 1s cubic-bezier(.2,.9,.3,1)';
-        resolve();
-      }, 30);
+        cube.style.transform = `rotateX(${rot.x + extraX}deg) rotateY(${rot.y + extraY}deg)`;
+
+        cube.addEventListener('transitionend', function handler(e) {
+            if (e.propertyName !== 'transform') return;
+            cube.removeEventListener('transitionend', handler);
+
+            cube.style.transition = 'none';
+            cube.style.transform = `rotateX(${rot.x}deg) rotateY(${rot.y}deg)`;
+
+            setTimeout(() => {
+                cube.style.transition = 'transform 1s cubic-bezier(.2,.9,.3,1)';
+                resolve();
+            }, 30);
+        });
     });
-  });
 }
 
-/* ======================================= */
-/* 🎮 دکمه رول (تاس ریختن)                  */
-/* ======================================= */
+// ======================================= //
+// 🎮 ROLL BUTTON                           //
+// ======================================= //
 
 document.getElementById("roll-btn").addEventListener("click", async () => {
-  if (isRolling) return;
-  if (gameState.rollCount >= gameState.maxRolls) return;
-  if (gameState.gameFinished) return;
+    if (isRolling) return;
+    if (gameState.rollCount >= gameState.maxRolls) return;
+    if (gameState.gameFinished) return;
 
-  isRolling = true;
-  const btn = document.getElementById("roll-btn");
-  btn.disabled = true;
-  
-  gameState.selectedCategory = null;
-  document.querySelectorAll('#score-board .score-row.selected').forEach(r => {
-    r.classList.remove('selected');
-  });
-  document.getElementById('play-btn').disabled = true;
-
-  const unlockedIndices = diceData
-    .map((d, idx) => !d.locked ? idx : -1)
-    .filter(idx => idx !== -1);
-
-  if (unlockedIndices.length > 0) {
-    const promises = unlockedIndices.map(idx => rollSingleDice(idx));
-    await Promise.all(promises);
-  }
-
-  gameState.rollCount++;
-  renderDice();
-  updateScoreDisplays();
-
-  if (gameState.rollCount >= gameState.maxRolls) {
+    isRolling = true;
+    const btn = document.getElementById("roll-btn");
     btn.disabled = true;
-    btn.textContent = "۳ بار رول کردید";
-  } else {
-    btn.disabled = false;
-    btn.textContent = `تاس بریز (${3 - gameState.rollCount})`;
-  }
+    
+    gameState.selectedCategory = null;
+    document.querySelectorAll('#score-board .score-row.selected').forEach(r => {
+        r.classList.remove('selected');
+    });
+    document.getElementById('play-btn').disabled = true;
 
-  isRolling = false;
+    const unlockedIndices = diceData
+        .map((d, idx) => !d.locked ? idx : -1)
+        .filter(idx => idx !== -1);
+
+    if (unlockedIndices.length > 0) {
+        const promises = unlockedIndices.map(idx => rollSingleDice(idx));
+        await Promise.all(promises);
+    }
+
+    gameState.rollCount++;
+    renderDice();
+    updateScoreDisplays();
+
+    if (gameState.rollCount >= gameState.maxRolls) {
+        btn.disabled = true;
+        btn.textContent = "3 rolls used";
+    } else {
+        btn.disabled = false;
+        btn.textContent = `Roll Dice (${3 - gameState.rollCount} left)`;
+    }
+
+    isRolling = false;
 });
 
-/* ======================================= */
-/* 🎮 دکمه پلی (ثبت امتیاز)                 */
-/* ======================================= */
+// ======================================= //
+// 🎮 PLAY BUTTON (CONFIRM SCORE)           //
+// ======================================= //
 
 document.getElementById("play-btn").addEventListener("click", function() {
     if (!gameState.selectedCategory) return;
@@ -1449,7 +1427,7 @@ document.getElementById("play-btn").addEventListener("click", function() {
 
     gameState.confirmedCategories[playerKey][rowIndex] = score;
     
-    // افکت انیمیشن برای امتیاز ثبت شده
+    // Animation effect for confirmed score
     const selectedRow = document.querySelector('#score-board .score-row.selected');
     if (selectedRow) {
         const valueBox = selectedRow.querySelector(`.value-box[data-player="${player}"]`);
@@ -1472,9 +1450,9 @@ document.getElementById("play-btn").addEventListener("click", function() {
     checkGameCompletion();
 });
 
-/* ======================================= */
-/* 🔄 مدیریت نوبت‌ها                        */
-/* ======================================= */
+// ======================================= //
+// 🔄 TURN MANAGEMENT                       //
+// ======================================= //
 
 function resetDiceForNewTurn() {
     diceData.forEach(d => d.locked = false);
@@ -1496,7 +1474,7 @@ function nextTurn() {
     renderDice();
     document.getElementById("play-btn").disabled = true;
     document.getElementById("roll-btn").disabled = false;
-    document.getElementById("roll-btn").textContent = "تاس بریز";
+    document.getElementById("roll-btn").textContent = "Roll Dice";
     if (!gameState.gameFinished) startTimer();
     updateScoreDisplays();
 }
@@ -1530,9 +1508,9 @@ function endGame() {
     document.getElementById('top-wrapper').style.display = 'none';
 }
 
-/* ======================================= */
-/* 🏆 محاسبه نتایج نهایی                    */
-/* ======================================= */
+// ======================================= //
+// 🏆 FINAL RESULTS CALCULATION             //
+// ======================================= //
 
 function calculateFinalResults() {
     const player1BaseScore = gameState.confirmedCategories.player1.reduce((s, v) => s + (v||0), 0);
@@ -1545,8 +1523,18 @@ function calculateFinalResults() {
     if (player1Total > player2Total) winner = 1;
     else if (player2Total > player1Total) winner = 2;
     return {
-        player1: { baseScore: player1BaseScore, specialBonus: player1SpecialBonus, totalScore: player1Total, specialCount: gameState.specialBonuses.player1 },
-        player2: { baseScore: player2BaseScore, specialBonus: player2SpecialBonus, totalScore: player2Total, specialCount: gameState.specialBonuses.player2 },
+        player1: { 
+            baseScore: player1BaseScore, 
+            specialBonus: player1SpecialBonus, 
+            totalScore: player1Total, 
+            specialCount: gameState.specialBonuses.player1 
+        },
+        player2: { 
+            baseScore: player2BaseScore, 
+            specialBonus: player2SpecialBonus, 
+            totalScore: player2Total, 
+            specialCount: gameState.specialBonuses.player2 
+        },
         winner
     };
 }
@@ -1566,13 +1554,19 @@ function updateGameStats(results) {
     gameStats.player2.totalScore += results.player2.totalScore;
     gameStats.player1.totalSpecialBonus += results.player1.specialBonus;
     gameStats.player2.totalSpecialBonus += results.player2.specialBonus;
-    if (results.winner === 1) { gameStats.player1.wins++; gameStats.player2.losses++; }
-    else if (results.winner === 2) { gameStats.player2.wins++; gameStats.player1.losses++; }
+    if (results.winner === 1) { 
+        gameStats.player1.wins++; 
+        gameStats.player2.losses++; 
+    }
+    else if (results.winner === 2) { 
+        gameStats.player2.wins++; 
+        gameStats.player1.losses++; 
+    }
 }
 
-/* ======================================= */
-/* 📊 نمایش صفحه نتایج                     */
-/* ======================================= */
+// ======================================= //
+// 📊 RESULTS SCREEN                        //
+// ======================================= //
 
 function showResultsScreen(results) {
     const resultsScreen = document.getElementById('results-screen');
@@ -1601,21 +1595,21 @@ function showResultsScreen(results) {
         
         playerDiv.innerHTML = `
             <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px; color: ${playerNum === 1 ? '#FFD700' : '#00FF7F'}">
-                ${playerNum === 1 ? '👑' : '⚔️'} بازیکن ${playerNum} ${results.winner === playerNum ? '🏆 برنده!' : ''}
+                ${playerNum === 1 ? '👑' : '⚔️'} ${gameState.playerNames[playerKey]} ${results.winner === playerNum ? '🏆 Winner!' : ''}
             </div>
             <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between;">
                 <div style="flex: 1; min-width: 120px;">
                     <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                            <span style="font-size: 14px;">امتیاز:</span>
+                            <span style="font-size: 14px;">Score:</span>
                             <span style="font-weight: bold; font-size: 18px;">${playerData.totalScore}</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                            <span style="font-size: 12px; color: #aaa;">پایه:</span>
+                            <span style="font-size: 12px; color: #aaa;">Base:</span>
                             <span style="font-size: 14px;">${playerData.baseScore}</span>
                         </div>
                         <div style="display: flex; justify-content: space-between;">
-                            <span style="font-size: 12px; color: #aaa;">ویژه:</span>
+                            <span style="font-size: 12px; color: #aaa;">Special:</span>
                             <span style="font-size: 14px; color: #4eff4e;">${playerData.specialBonus}</span>
                         </div>
                     </div>
@@ -1623,19 +1617,22 @@ function showResultsScreen(results) {
                 <div style="flex: 1; min-width: 120px;">
                     <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                            <span style="font-size: 12px; color: #aaa;">بازی‌ها:</span>
+                            <span style="font-size: 12px; color: #aaa;">Games:</span>
                             <span style="font-size: 14px;">${playerStats.gamesPlayed}</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                            <span style="font-size: 12px; color: #aaa;">برد:</span>
+                            <span style="font-size: 12px; color: #aaa;">Wins:</span>
                             <span style="font-size: 14px; color: #4eff4e;">${playerStats.wins}</span>
                         </div>
                         <div style="display: flex; justify-content: space-between;">
-                            <span style="font-size: 12px; color: #aaa;">باخت:</span>
+                            <span style="font-size: 12px; color: #aaa;">Losses:</span>
                             <span style="font-size: 14px; color: #ff3333;">${playerStats.losses}</span>
                         </div>
                     </div>
                 </div>
+            </div>
+            <div style="margin-top: 10px; font-size: 12px; color: #aaa; text-align: center;">
+                Room: ${gameState.roomId || 'Local Game'} | Cooldown: 10 minutes
             </div>
         `;
         
@@ -1644,43 +1641,9 @@ function showResultsScreen(results) {
     resultsScreen.style.display = 'block';
 }
 
-/* ======================================= */
-/* 🔄 دکمه بازی مجدد                       */
-/* ======================================= */
-
-document.getElementById('restart-btn').addEventListener('click', function() {
-    gameState = {
-        currentPlayer: 1, rollCount: 0, maxRolls: 3, selectedCategory: null,
-        confirmedCategories: { player1: Array(6).fill(null), player2: Array(6).fill(null) },
-        gameFinished: false, specialBonuses: { player1: 0, player2: 0 }
-    };
-    
-    diceData = [
-        { id: 0, locked: false, value: rand1to6() },
-        { id: 1, locked: false, value: rand1to6() },
-        { id: 2, locked: false, value: rand1to6() },
-        { id: 3, locked: false, value: rand1to6() },
-        { id: 4, locked: false, value: rand1to6() }
-    ];
-    
-    document.getElementById('results-screen').style.display = 'none';
-    document.getElementById('main-box').style.display = 'flex';
-    document.getElementById('score-board').style.display = 'block';
-    document.getElementById('top-wrapper').style.display = 'flex';
-    
-    renderScoreBoard();
-    renderDice();
-    updateTurnDisplay();
-    startTimer();
-    
-    document.getElementById("roll-btn").disabled = false;
-    document.getElementById("roll-btn").textContent = "تاس بریز";
-    document.getElementById("play-btn").disabled = true;
-});
-
-/* ======================================= */
-/* 🔄 نمایش وضعیت نوبت                     */
-/* ======================================= */
+// ======================================= //
+// 🔄 TURN DISPLAY UPDATE                   //
+// ======================================= //
 
 function updateTurnDisplay() {
     const left = document.getElementById('playerBox1');
@@ -1701,28 +1664,176 @@ function updateTurnDisplay() {
     updateTimerDisplay();
 }
 
-/* ======================================= */
-/* 🚀 مقداردهی اولیه بازی                  */
-/* ======================================= */
+// ======================================= //
+// 🚀 GAME INITIALIZATION                  //
+// ======================================= //
 
 window.addEventListener('DOMContentLoaded', () => {
+    // Check for room token in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomToken = urlParams.get('room');
+    const gameToken = urlParams.get('token');
+    
+    // Show appropriate message based on access method
+    if (!roomToken && !gameToken) {
+        // Direct access - show instruction
+        document.body.innerHTML = `
+            <div style="text-align: center; padding: 50px; color: white;">
+                <h1>🎲 Dice Party</h1>
+                <p>Please join this game through the Telegram bot.</p>
+                <p>The bot will provide you with a game link.</p>
+                <p style="margin-top: 30px; color: #aaa;">Game features:</p>
+                <ul style="list-style: none; padding: 0;">
+                    <li>✅ 30-second timer per turn</li>
+                    <li>✅ 3 dice rolls maximum</li>
+                    <li>✅ Special bonus for 5-of-a-kind</li>
+                    <li>✅ 10-minute cooldown between games</li>
+                    <li>✅ Room system with spectators</li>
+                </ul>
+            </div>
+        `;
+        return;
+    }
+    
+    // Initialize game if token is present
     renderScoreBoard();
     renderDice();
     updateTurnDisplay();
     startTimer();
+    
+    // Store token for API calls
+    if (gameToken) {
+        localStorage.setItem('dice_game_token', gameToken);
+    }
+    if (roomToken) {
+        gameState.roomId = roomToken;
+    }
 });
+
+// ======================================= //
+// 🔐 API INTEGRATION FUNCTIONS            //
+// ======================================= //
+
+// API Helper functions - Will be fully implemented with Edge Functions
+const DiceAPI = {
+    async validateToken(token) {
+        try {
+            const response = await fetch(`${SUPABASE_CONFIG.FUNCTIONS_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${SUPABASE_CONFIG.ANON_KEY}`
+                },
+                body: JSON.stringify({
+                    action: 'VALIDATE_TOKEN',
+                    token: token
+                })
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Token validation error:', error);
+            return { success: false, error: 'Connection failed' };
+        }
+    },
+    
+    async createRoom(token, gameType = 'single') {
+        try {
+            const response = await fetch(`${SUPABASE_CONFIG.FUNCTIONS_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${SUPABASE_CONFIG.ANON_KEY}`
+                },
+                body: JSON.stringify({
+                    action: 'CREATE_ROOM',
+                    token: token,
+                    game_type: gameType
+                })
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Create room error:', error);
+            return { success: false, error: 'Connection failed' };
+        }
+    },
+    
+    async rollDice(token, roomId, playerId, lockedIndices = []) {
+        try {
+            const response = await fetch(`${SUPABASE_CONFIG.FUNCTIONS_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${SUPABASE_CONFIG.ANON_KEY}`
+                },
+                body: JSON.stringify({
+                    action: 'ROLL_DICE',
+                    token: token,
+                    room_id: roomId,
+                    player_id: playerId,
+                    locked_indices: lockedIndices
+                })
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Roll dice error:', error);
+            return { success: false, error: 'Connection failed' };
+        }
+    },
+    
+    async confirmScore(token, roomId, playerId, categoryIndex) {
+        try {
+            const response = await fetch(`${SUPABASE_CONFIG.FUNCTIONS_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${SUPABASE_CONFIG.ANON_KEY}`
+                },
+                body: JSON.stringify({
+                    action: 'CONFIRM_SCORE',
+                    token: token,
+                    room_id: roomId,
+                    player_id: playerId,
+                    category_index: categoryIndex
+                })
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Confirm score error:', error);
+            return { success: false, error: 'Connection failed' };
+        }
+    },
+    
+    async getRoomStatus(roomId) {
+        try {
+            const response = await fetch(`${SUPABASE_CONFIG.FUNCTIONS_URL}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${SUPABASE_CONFIG.ANON_KEY}`
+                },
+                body: JSON.stringify({
+                    action: 'GET_ROOM_STATUS',
+                    room_id: roomId
+                })
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Get room status error:', error);
+            return { success: false, error: 'Connection failed' };
+        }
+    }
+};
+
+// Test function for debugging
+window.testCreateRoom = async function() {
+    const token = localStorage.getItem('dice_game_token') || 'test-token';
+    const result = await DiceAPI.createRoom(token, 'single');
+    console.log('Test create room result:', result);
+    if (result.success) {
+        alert(`Room created: ${result.data.room_id}`);
+        gameState.roomId = result.data.room_id;
+    }
+};
 </script>
 </body>
-
 </html>
-
-
-
-
-
-
-
-
-
-
-
