@@ -777,8 +777,16 @@
         80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
     }
-</style>
 <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+
+<!-- سوپا -->
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://xouwoemiyxnugontsles.supabase.co'  // URL خودت
+const SUPABASE_ANON_KEY = 'sb_publishable_MFoTbKuCDjhVCs1-xvKNag_UwhV0tF-'  // کلید خودت
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+</script>
+
 </head>
 <body>
 
@@ -867,6 +875,29 @@ const tickSound = document.getElementById('tickSound');
 
 const baseURL = "https://raw.githubusercontent.com/nonacoin/main/main/Dice/";
 
+// ========== تابع تست سوپا ==========
+async function testSupabase() {
+  console.log('🔌 تست ارتباط با سوپا...');
+  
+  try {
+    const { data, error } = await supabase
+      .from('game_timers')
+      .select('*')
+      .limit(1);
+      
+    if (error) {
+      console.error('❌ خطا:', error.message);
+      return false;
+    } else {
+      console.log('✅ سوپا متصل شد!');
+      return true;
+    }
+  } catch (err) {
+    console.error('❌ خطای ناشناخته:', err);
+    return false;
+  }
+}
+// ===================================
 /* ======================================= */
 /* 🎲 توابع کمکی تاس                       */
 /* ======================================= */
@@ -1705,7 +1736,15 @@ function updateTurnDisplay() {
 /* 🚀 مقداردهی اولیه بازی                  */
 /* ======================================= */
 
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
+    console.log('🎲 بازی در حال بارگذاری...');
+    
+    // تست سوپا
+    const connected = await testSupabase();
+    if (!connected) {
+        console.warn('⚠️ سوپا وصل نشد، بازی به حالت آفلان ادامه می‌ده');
+    }
+    
     renderScoreBoard();
     renderDice();
     updateTurnDisplay();
@@ -1715,6 +1754,7 @@ window.addEventListener('DOMContentLoaded', () => {
 </body>
 
 </html>
+
 
 
 
