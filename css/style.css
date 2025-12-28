@@ -1,9 +1,5 @@
 /* ======================================= */
-/* 🎨 بخش استایل - ظاهر کلی بازی           */
-/* ======================================= */
-/* این فایل شامل تمام استایل‌های بازی است   */
-/* تاریخ ایجاد: [تاریخ امروز]              */
-/* آخرین تغییر: بدون تغییر - انتقال مستقیم */
+/* 🎨 استایل کلی و بدنه صفحه               */
 /* ======================================= */
 
 /* بدنه اصلی صفحه */
@@ -46,72 +42,75 @@ body::before {
 }
 
 /* ======================================= */
-/* 🎮 بخش پلیرها و تایمر - با رنگ‌بندی جدید */
+/* 🎮 بخش بازیکنان و تایمر                 */
 /* ======================================= */
 
-/* ردیف بالایی: دو پلیر */
+/* ردیف بالایی: دو بازیکن */
 #top-wrapper {
     display: flex;
-    gap: 5px;  /* از 15px به 5px */
-    justify-content: space-between;  /* تغییر به space-between */
+    gap: 5px;
+    justify-content: space-between;
     width: 100%;
-    padding: 0 5px;  /* اضافه کردم */
+    padding: 0 5px;
 }
 
-/* جعبه هر پلیر */
+/* جعبه هر بازیکن */
 .player-box {
-    width: 45%;  /* تغییر اصلی: از 192px به 45% */
-    min-width: 130px;  /* حداقل عرض */
-    max-width: 150px;  /* حداکثر عرض */
+    width: 45%;
+    min-width: 130px;
+    max-width: 150px;
     background: rgba(30, 30, 46, 0.9);
-    padding: 8px 10px;  /* کاهش بیشتر */
-    border-radius: 8px;  /* کاهش از 10px */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);  /* کاهش */
+    padding: 8px 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 4px;  /* کاهش بیشتر */
+    gap: 4px;
     transition: all 0.3s ease;
+    position: relative;
 }
 
-/* پلیر فعال (نوبتش است) */
+/* بازیکن فعال (نوبتش است) */
 .player-box.active-player {
     transform: scale(1.03);
     animation: glowEffect 2s infinite alternate;
 }
 
-/* پلیر 1 - رنگ زرد طلایی */
+/* بازیکن 1 - رنگ زرد طلایی */
 .player-box.player1 {
-    border: 2px solid #FFD700; /* طلایی */
+    border: 2px solid #FFD700;
     box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
 }
+
 .player-box.player1.active-player {
     box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
 }
 
-/* پلیر 2 - رنگ سبز */
+/* بازیکن 2 - رنگ سبز */
 .player-box.player2 {
-    border: 2px solid #00FF7F; /* سبز بهاری */
+    border: 2px solid #00FF7F;
     box-shadow: 0 0 15px rgba(0, 255, 127, 0.3);
 }
+
 .player-box.player2.active-player {
     box-shadow: 0 0 25px rgba(0, 255, 127, 0.6);
 }
 
-/* افکت درخشش برای پلیر فعال */
+/* افکت درخشش برای بازیکن فعال */
 @keyframes glowEffect {
     0% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); }
     100% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.7); }
 }
 
-/* پلیر غیرفعال */
+/* بازیکن غیرفعال */
 .player-box.inactive {
     opacity: 0.6;
     filter: grayscale(40%);
     transform: scale(0.98);
 }
 
-/* عنوان پلیر */
+/* عنوان بازیکن */
 .player-title {
     font-size: 16px;
     font-weight: bold;
@@ -120,26 +119,28 @@ body::before {
     gap: 7px;
 }
 
-/* رنگ عنوان هر پلیر */
+/* رنگ عنوان هر بازیکن */
 .player1 .player-title {
-    color: #FFD700; /* طلایی */
+    color: #FFD700;
     text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
 }
+
 .player2 .player-title {
-    color: #00FF7F; /* سبز */
+    color: #00FF7F;
     text-shadow: 0 0 8px rgba(0, 255, 127, 0.5);
 }
 
-/* آیکون پلیرها */
+/* آیکون بازیکن‌ها */
 .player1 .player-title::before {
-    content: '👑'; /* تاج برای پلیر 1 */
+    content: '👑'; /* تاج برای بازیکن 1 */
 }
+
 .player2 .player-title::before {
-    content: '⚔️'; /* شمشیر برای پلیر 2 */
+    content: '⚔️'; /* شمشیر برای بازیکن 2 */
 }
 
 /* ======================================= */
-/* ⏱️ بخش تایمر - با رنگ‌بندی جدید         */
+/* ⏱️ بخش تایمر                            */
 /* ======================================= */
 
 /* نمایشگر تایمر */
@@ -163,19 +164,19 @@ body::before {
     50% { transform: scale(1.05); }
 }
 
-/* تایمر پلیر 1 - زرد */
+/* تایمر بازیکن 1 - زرد */
 .player1 .player-timer {
-    background: linear-gradient(135deg, #FFD700, #FFA500); /* طلایی به نارنجی */
+    background: linear-gradient(135deg, #FFD700, #FFA500);
     box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
 }
 
-/* تایمر پلیر 2 - سبز */
+/* تایمر بازیکن 2 - سبز */
 .player2 .player-timer {
-    background: linear-gradient(135deg, #00FF7F, #00CC66); /* سبز به سبز تیره */
+    background: linear-gradient(135deg, #00FF7F, #00CC66);
     box-shadow: 0 4px 15px rgba(0, 255, 127, 0.4);
 }
 
-/* تایمر فعال (پلیر جاری) */
+/* تایمر فعال (بازیکن جاری) */
 .player-timer.active {
     animation: heartbeat 1s infinite;
     font-weight: 900;
@@ -203,12 +204,12 @@ body::before {
 }
 
 /* ======================================= */
-/* 📊 بخش جدول امتیازات - طرح جدید         */
+/* 📊 بخش جدول امتیازات                   */
 /* ======================================= */
 
 /* کانتینر جدول امتیازات */
 #score-board {
-    width: 460px; /* کمی بزرگتر برای طرح جدید */
+    width: 460px;
     background: rgba(30, 30, 46, 0.9);
     padding: 15px;
     border-radius: 10px;
@@ -227,27 +228,27 @@ body::before {
 
 /* عنوان هر ستون */
 .score-column-title {
-    font-size: 18px;  /* از 14px به 11px */
+    font-size: 18px;
     font-weight: bold;
-    padding: 6px 1px;  /* از 8px 15px به 5px 8px */
+    padding: 6px 1px;
     border-radius: 1px;
     flex: 1;
     text-align: center;
-    margin: 0 2px;  /* از 5px به 2px */
-    min-width: 0;  /* اضافه کردم */
+    margin: 0 2px;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-/* عنوان ستون پلیر 1 */
+/* عنوان ستون بازیکن 1 */
 .score-column-title.player1 {
     background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1));
     color: #FFD700;
     border: 1px solid rgba(255, 215, 0, 0.3);
 }
 
-/* عنوان ستون پلیر 2 */
+/* عنوان ستون بازیکن 2 */
 .score-column-title.player2 {
     background: linear-gradient(135deg, rgba(0, 255, 127, 0.2), rgba(0, 204, 102, 0.1));
     color: #00FF7F;
@@ -296,7 +297,7 @@ body::before {
     border: 1px solid rgba(255, 215, 0, 0.4);
 }
 
-/* سطلون تصویر تاس (وسط) */
+/* ستون تصویر تاس (وسط) */
 .score-column.dice {
     flex: 1;
     display: flex;
@@ -331,9 +332,9 @@ body::before {
 
 /* جعبه نمایش عدد (امتیاز) */
 .value-box {
-    width: 60px;  /* از 85px به 60px تغییر دادم */
-    padding: 6px 8px;  /* از 8px 10px به 6px 8px تغییر دادم */
-    font-size: 18px;  /* از 14px به 12px تغییر دادم */
+    width: 60px;
+    padding: 6px 8px;
+    font-size: 18px;
     border-radius: 8px;
     border: none;
     outline: none;
@@ -347,7 +348,7 @@ body::before {
     transition: all 0.3s ease;
 }
 
-/* امتیاز ثبت شده توسط پلیر 1 */
+/* امتیاز ثبت شده توسط بازیکن 1 */
 .value-box.confirmed.player1 {
     background: linear-gradient(135deg, #FFD700, #FFA500);
     color: #000;
@@ -356,7 +357,7 @@ body::before {
     font-weight: 900;
 }
 
-/* امتیاز ثبت شده توسط پلیر 2 */
+/* امتیاز ثبت شده توسط بازیکن 2 */
 .value-box.confirmed.player2 {
     background: linear-gradient(135deg, #00FF7F, #00CC66);
     color: #000;
@@ -409,9 +410,9 @@ body::before {
     justify-content: center;
     cursor: pointer;
     position: relative;
-    border-radius: 8px;  /* اضافه کردم */
-    background: rgba(255, 255, 255, 0.05);  /* اضافه کردم */
-    padding: 2px;  /* اضافه کردم */
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2px;
 }
 
 /* تاس قفل شده */
@@ -456,8 +457,8 @@ body::before {
     background: linear-gradient(145deg, #2a0845, #1a0a3e);
     backface-visibility: hidden;
     overflow: hidden;
-    border: 2px solid rgba(255, 255, 255, 0.3);  /* تغییر از 0.15 به 0.3 */
-    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2);  /* اضافه کردم */
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
 /* نقاط روی وجه تاس */
@@ -612,25 +613,25 @@ body::before {
     
     #top-wrapper {
         flex-direction: row;
-        flex-wrap: nowrap;  /* تغییر به nowrap */
-        justify-content: space-between;  /* تغییر به space-between */
+        flex-wrap: nowrap;
+        justify-content: space-between;
         gap: 5px;
         width: 100%;
     }
     
     .player-box {
-        width: 48%;  /* ساده‌تر */
+        width: 48%;
         min-width: 140px;
         padding: 6px 8px;
-        flex: 1;  /* اضافه کردم */
+        flex: 1;
     }
     
     .player-title {
-        font-size: 14px;  /* اضافه کردم */
+        font-size: 14px;
     }
     
     .player-timer {
-        font-size: 12px;  /* اضافه کردم */
+        font-size: 12px;
         padding: 3px 6px;
         min-width: 28px;
     }
@@ -662,10 +663,10 @@ body::before {
         width: 40px;
         height: 40px;
     }
-
+    
     .pip {
-        width: 7px;  /* افزایش از 5px */
-        height: 7px;  /* افزایش از 5px */
+        width: 7px;
+        height: 7px;
     }
     
     #main-box {
@@ -696,7 +697,10 @@ body::before {
     }
 }
 
-/* انیمیشن‌های اضافی */
+/* ======================================= */
+/* 🎭 انیمیشن‌های اضافی                   */
+/* ======================================= */
+
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
     10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
