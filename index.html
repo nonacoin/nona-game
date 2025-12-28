@@ -793,19 +793,22 @@ try {
     console.log('✅ Supabase برای بازی وصل شد');
     
     // تست سریع
-    setTimeout(() => {
-        window.supabase.rpc('test_game_connection').then(result => {
-            if (result.data) {
-                console.log('🎯 سرور بازی پاسخ داد:', result.data.message);
-            }
-            if (result.error) {
-                console.warn('⚠️  خطا در تست:', result.error.message);
-            }
-        });
-    }, 1000);
+	<script>
+// تست اتصال - بعد از خط ۶۰
+setTimeout(async () => {
+  try {
+    const { count, error } = await supabase
+      .from('game_rooms_v0')
+      .select('*', { count: 'exact', head: true });
     
-} catch (error) {
-    console.error('❌ خطا در اتصال:', error);
+    if (error) throw error;
+    console.log('✅ اتصال واقعی تأیید شد. تعداد روم‌ها:', count);
+  } catch (err) {
+    console.error('❌ اتصال واقعی شکست خورد:', err.message);
+  }
+}, 2000);
+</script>
+
 }
 </script>
 <!-- ======================================= -->
@@ -1739,21 +1742,6 @@ window.addEventListener('DOMContentLoaded', () => {
     updateTurnDisplay();
     startTimer();
 });
-	<script>
-// تست اتصال - بعد از خط ۶۰
-setTimeout(async () => {
-  try {
-    const { count, error } = await supabase
-      .from('game_rooms_v0')
-      .select('*', { count: 'exact', head: true });
-    
-    if (error) throw error;
-    console.log('✅ اتصال واقعی تأیید شد. تعداد روم‌ها:', count);
-  } catch (err) {
-    console.error('❌ اتصال واقعی شکست خورد:', err.message);
-  }
-}, 2000);
-</script>
 </script>
 /
 </body>
