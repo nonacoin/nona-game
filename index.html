@@ -793,7 +793,19 @@ try {
     console.log('✅ Supabase برای بازی وصل شد');
     
     // تست سریع
-
+    setTimeout(() => {
+        window.supabase.rpc('test_game_connection').then(result => {
+            if (result.data) {
+                console.log('🎯 سرور بازی پاسخ داد:', result.data.message);
+            }
+            if (result.error) {
+                console.warn('⚠️  خطا در تست:', result.error.message);
+            }
+        });
+    }, 1000);
+    
+} catch (error) {
+    console.error('❌ خطا در اتصال:', error);
 }
 </script>
 <!-- ======================================= -->
