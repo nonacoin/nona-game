@@ -1,83 +1,85 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dice Party - نسخه رنگارنگ</title>
-    
-    <!-- لینک فونت فارسی -->
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
-    
-    <!-- لینک فایل CSS -->
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dice Party - نسخه رنگارنگ</title>
+<link rel="stylesheet" href="css/styles.css">
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
 </head>
 <body>
-    <!-- 🏗️ ساختار اصلی بازی -->
-    <div id="game-container">
-        <!-- بخش بالایی: اطلاعات بازیکنان -->
-        <div id="top-wrapper">
-            <!-- بازیکن 1 -->
-            <div id="playerBox1" class="player-box player1 active-player">
-                <div class="turn-indicator">نوبت شما</div>
-                <div class="player-title">بازیکن ۱</div>
-                <div id="player1Timer" class="player-timer active">۳۰</div>
-            </div>
-            
-            <!-- بازیکن 2 -->
-            <div id="playerBox2" class="player-box player2 inactive">
-                <div class="turn-indicator">نوبت شما</div>
-                <div class="player-title">بازیکن ۲</div>
-                <div id="player2Timer" class="player-timer">۳۰</div>
-            </div>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://xouwoemiyxnugontsles.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_MFoTbKuCDjhVCs1-xvKNag_UwhV0tF-';
+
+try {
+    window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    console.log('✅ Supabase برای بازی وصل شد');
+    
+    setTimeout(() => {
+        window.supabase.rpc('test_game_connection').then(result => {
+            if (result.data) {
+                console.log('🎯 سرور بازی پاسخ داد:', result.data.message);
+            }
+            if (result.error) {
+                console.warn('⚠️  خطا در تست:', result.error.message);
+            }
+        });
+    }, 1000);
+    
+} catch (error) {
+    console.error('❌ خطا در اتصال:', error);
+}
+</script>
+
+<div id="game-container">
+    <div id="top-wrapper">
+        <div id="playerBox1" class="player-box player1 active-player">
+            <div class="turn-indicator">نوبت شما</div>
+            <div class="player-title">بازیکن ۱</div>
+            <div id="player1Timer" class="player-timer active">۳۰</div>
         </div>
-
-        <!-- جدول امتیازات -->
-        <div id="score-board">
-            <div class="score-header">
-                <div class="score-column-title player1">بازیکن ۱</div>
-                <div class="score-column-title dice">تاس</div>
-                <div class="score-column-title player2">بازیکن ۲</div>
-            </div>
-            <!-- ردیف‌های امتیاز توسط جاوااسکریپت ساخته می‌شوند -->
-        </div>
-
-        <!-- بخش اصلی بازی -->
-        <div id="main-box">
-            <!-- تاس‌های سه‌بعدی -->
-            <div id="dice-container"></div>
-
-            <!-- دکمه‌های بازی -->
-            <div id="button-row">
-                <button id="roll-btn" class="game-btn">تاس بریز</button>
-                <button id="play-btn" class="game-btn" disabled>ثبت کن</button>
-            </div>
-        </div>
-
-        <!-- صفحه نتایج پایانی -->
-        <div id="results-screen" class="results-screen">
-            <div class="results-title">🏆 نتایج نهایی</div>
-            <div class="results-columns" id="resultsColumns"></div>
-            <button id="restart-btn" class="game-btn" style="margin-top: 18px; background: linear-gradient(135deg, #00cc66, #00994d);">
-                بازی مجدد
-            </button>
+        <div id="playerBox2" class="player-box player2 inactive">
+            <div class="turn-indicator">نوبت شما</div>
+            <div class="player-title">بازیکن ۲</div>
+            <div id="player2Timer" class="player-timer">۳۰</div>
         </div>
     </div>
 
-    <!-- 🔊 صداهای بازی -->
-    <audio id="diceSound" src="sounds/tasandakhtan.wav"></audio>
-    <audio id="lockSound" src="sounds/ghofl.wav"></audio>
-    <audio id="selectSound" src="sounds/select.wav"></audio>
-    <audio id="confirmSound" src="sounds/sabt.wav"></audio>
-    <audio id="timeoutSound" src="sounds/timeout.wav"></audio>
-    <audio id="warningSound" src="sounds/warning.wav"></audio>
-    <audio id="tickSound" src="sounds/tick.wav"></audio>
+    <div id="score-board">
+        <div class="score-header">
+            <div class="score-column-title player1">بازیکن ۱</div>
+            <div class="score-column-title dice">تاس</div>
+            <div class="score-column-title player2">بازیکن ۲</div>
+        </div>
+    </div>
 
-    <!-- 📦 لینک فایل‌های جاوااسکریپت -->
-    <script src="game-state.js"></script>
-    <script src="dice-3d.js"></script>
-    <script src="timer.js"></script>
-    <script src="score-board.js"></script>
-    <script src="server-api.js"></script>
-    <script src="script.js"></script>
+    <div id="main-box">
+        <div id="dice-container"></div>
+        <div id="button-row">
+            <button id="roll-btn" class="game-btn">تاس بریز</button>
+            <button id="play-btn" class="game-btn" disabled>ثبت کن</button>
+        </div>
+    </div>
+
+    <div id="results-screen" class="results-screen">
+        <div class="results-title">🏆 نتایج نهایی</div>
+        <div class="results-columns" id="resultsColumns"></div>
+        <button id="restart-btn" class="game-btn" style="margin-top: 18px; background: linear-gradient(135deg, #00cc66, #00994d);">
+            بازی مجدد
+        </button>
+    </div>
+</div>
+
+<audio id="diceSound" src="https://raw.githubusercontent.com/nonacoin/nona-game/main/sounds/tasandakhtan.wav"></audio>
+<audio id="lockSound" src="https://raw.githubusercontent.com/nonacoin/nona-game/main/sounds/ghofl.wav"></audio>
+<audio id="selectSound" src="https://raw.githubusercontent.com/nonacoin/nona-game/main/sounds/ghofl.wav"></audio>
+<audio id="confirmSound" src="https://raw.githubusercontent.com/nonacoin/nona-game/main/sounds/sabt.wav"></audio>
+<audio id="timeoutSound" src="https://raw.githubusercontent.com/nonacoin/nona-game/main/sounds/sabt.wav"></audio>
+<audio id="warningSound" src="https://raw.githubusercontent.com/nonacoin/nona-game/main/sounds/ghofl.wav"></audio>
+<audio id="tickSound" src="https://raw.githubusercontent.com/nonacoin/nona-game/main/sounds/ghofl.wav"></audio>
+
+<script src="js/game.js"></script>
 </body>
 </html>
