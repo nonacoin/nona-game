@@ -1,0 +1,756 @@
+/* ======================================= */
+/* 🎨 بخش استایل - ظاهر کلی بازی           */
+/* ======================================= */
+/* این فایل شامل تمام استایل‌های بازی است   */
+/* تاریخ ایجاد: [تاریخ امروز]              */
+/* آخرین تغییر: بدون تغییر - انتقال مستقیم */
+/* ======================================= */
+
+/* بدنه اصلی صفحه */
+body {
+    font-family: 'Vazirmatn', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    color: #fff;
+    padding: 12px;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+/* ذرات معلق در پس‌زمینه */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 20% 30%, rgba(255, 215, 0, 0.05) 0%, transparent 20%),
+        radial-gradient(circle at 80% 70%, rgba(0, 255, 128, 0.05) 0%, transparent 20%);
+    z-index: -1;
+}
+
+/* کانتینر اصلی بازی */
+#game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    max-width: 720px;
+    width: 100%;
+}
+
+/* ======================================= */
+/* 🎮 بخش پلیرها و تایمر - با رنگ‌بندی جدید */
+/* ======================================= */
+
+/* ردیف بالایی: دو پلیر */
+#top-wrapper {
+    display: flex;
+    gap: 5px;  /* از 15px به 5px */
+    justify-content: space-between;  /* تغییر به space-between */
+    width: 100%;
+    padding: 0 5px;  /* اضافه کردم */
+}
+
+/* جعبه هر پلیر */
+.player-box {
+    width: 45%;  /* تغییر اصلی: از 192px به 45% */
+    min-width: 130px;  /* حداقل عرض */
+    max-width: 150px;  /* حداکثر عرض */
+    background: rgba(30, 30, 46, 0.9);
+    padding: 8px 10px;  /* کاهش بیشتر */
+    border-radius: 8px;  /* کاهش از 10px */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);  /* کاهش */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;  /* کاهش بیشتر */
+    transition: all 0.3s ease;
+}
+
+/* پلیر فعال (نوبتش است) */
+.player-box.active-player {
+    transform: scale(1.03);
+    animation: glowEffect 2s infinite alternate;
+}
+
+/* پلیر 1 - رنگ زرد طلایی */
+.player-box.player1 {
+    border: 2px solid #FFD700; /* طلایی */
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+.player-box.player1.active-player {
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+}
+
+/* پلیر 2 - رنگ سبز */
+.player-box.player2 {
+    border: 2px solid #00FF7F; /* سبز بهاری */
+    box-shadow: 0 0 15px rgba(0, 255, 127, 0.3);
+}
+.player-box.player2.active-player {
+    box-shadow: 0 0 25px rgba(0, 255, 127, 0.6);
+}
+
+/* افکت درخشش برای پلیر فعال */
+@keyframes glowEffect {
+    0% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); }
+    100% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.7); }
+}
+
+/* پلیر غیرفعال */
+.player-box.inactive {
+    opacity: 0.6;
+    filter: grayscale(40%);
+    transform: scale(0.98);
+}
+
+/* عنوان پلیر */
+.player-title {
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+/* رنگ عنوان هر پلیر */
+.player1 .player-title {
+    color: #FFD700; /* طلایی */
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+}
+.player2 .player-title {
+    color: #00FF7F; /* سبز */
+    text-shadow: 0 0 8px rgba(0, 255, 127, 0.5);
+}
+
+/* آیکون پلیرها */
+.player1 .player-title::before {
+    content: '👑'; /* تاج برای پلیر 1 */
+}
+.player2 .player-title::before {
+    content: '⚔️'; /* شمشیر برای پلیر 2 */
+}
+
+/* ======================================= */
+/* ⏱️ بخش تایمر - با رنگ‌بندی جدید         */
+/* ======================================= */
+
+/* نمایشگر تایمر */
+.player-timer {
+    font-size: 18px;
+    font-weight: bold;
+    padding: 6px 12px;
+    border-radius: 8px;
+    color: #000;
+    min-width: 42px;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    animation: pulse 1s infinite;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* انیمیشن تپش */
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* تایمر پلیر 1 - زرد */
+.player1 .player-timer {
+    background: linear-gradient(135deg, #FFD700, #FFA500); /* طلایی به نارنجی */
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+}
+
+/* تایمر پلیر 2 - سبز */
+.player2 .player-timer {
+    background: linear-gradient(135deg, #00FF7F, #00CC66); /* سبز به سبز تیره */
+    box-shadow: 0 4px 15px rgba(0, 255, 127, 0.4);
+}
+
+/* تایمر فعال (پلیر جاری) */
+.player-timer.active {
+    animation: heartbeat 1s infinite;
+    font-weight: 900;
+}
+
+/* انیمیشن تپش قلب */
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* حالت هشدار (10 ثانیه آخر) */
+.player-timer.warning {
+    background: linear-gradient(135deg, #FF3333, #CC0000) !important;
+    color: white !important;
+    font-size: 18px;
+    animation: warningPulse 0.5s infinite alternate;
+    box-shadow: 0 0 25px rgba(255, 0, 0, 0.7) !important;
+}
+
+/* انیمیشن هشدار 10 ثانیه آخر */
+@keyframes warningPulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.15); }
+}
+
+/* ======================================= */
+/* 📊 بخش جدول امتیازات - طرح جدید         */
+/* ======================================= */
+
+/* کانتینر جدول امتیازات */
+#score-board {
+    width: 460px; /* کمی بزرگتر برای طرح جدید */
+    background: rgba(30, 30, 46, 0.9);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 9px 21px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* هدر جدول */
+.score-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+/* عنوان هر ستون */
+.score-column-title {
+    font-size: 18px;  /* از 14px به 11px */
+    font-weight: bold;
+    padding: 6px 1px;  /* از 8px 15px به 5px 8px */
+    border-radius: 1px;
+    flex: 1;
+    text-align: center;
+    margin: 0 2px;  /* از 5px به 2px */
+    min-width: 0;  /* اضافه کردم */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* عنوان ستون پلیر 1 */
+.score-column-title.player1 {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1));
+    color: #FFD700;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+/* عنوان ستون پلیر 2 */
+.score-column-title.player2 {
+    background: linear-gradient(135deg, rgba(0, 255, 127, 0.2), rgba(0, 204, 102, 0.1));
+    color: #00FF7F;
+    border: 1px solid rgba(0, 255, 127, 0.3);
+}
+
+/* عنوان ستون تاس */
+.score-column-title.dice {
+    background: linear-gradient(135deg, rgba(138, 43, 226, 0.2), rgba(75, 0, 130, 0.1));
+    color: #8A2BE2;
+    border: 1px solid rgba(138, 43, 226, 0.3);
+}
+
+/* هر ردیف امتیاز */
+.score-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+/* افکت هاور روی ردیف */
+.score-row:hover {
+    background: linear-gradient(90deg, 
+        rgba(138, 43, 226, 0.1), 
+        rgba(75, 0, 130, 0.05), 
+        rgba(138, 43, 226, 0.1)
+    );
+    transform: translateY(-2px);
+}
+
+/* ردیف انتخاب شده */
+.score-row.selected {
+    background: linear-gradient(90deg, 
+        rgba(255, 215, 0, 0.15), 
+        rgba(255, 165, 0, 0.1), 
+        rgba(255, 215, 0, 0.15)
+    );
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    border: 1px solid rgba(255, 215, 0, 0.4);
+}
+
+/* سطلون تصویر تاس (وسط) */
+.score-column.dice {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ستون امتیاز */
+.score-column {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 5px;
+}
+
+/* تصویر تاس کوچک */
+.mini-dice {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3));
+}
+
+/* افکت هاور روی تاس */
+.score-row:hover .mini-dice {
+    transform: scale(1.15) rotate(10deg);
+    filter: drop-shadow(0 5px 10px rgba(255, 215, 0, 0.5));
+}
+
+/* جعبه نمایش عدد (امتیاز) */
+.value-box {
+    width: 60px;  /* از 85px به 60px تغییر دادم */
+    padding: 6px 8px;  /* از 8px 10px به 6px 8px تغییر دادم */
+    font-size: 18px;  /* از 14px به 12px تغییر دادم */
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    text-align: center;
+    background: rgba(40, 40, 60, 0.9);
+    color: #fff;
+    direction: ltr;
+    font-weight: bold;
+    font-family: 'Courier New', monospace;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+/* امتیاز ثبت شده توسط پلیر 1 */
+.value-box.confirmed.player1 {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #000;
+    border: 1px solid rgba(255, 215, 0, 0.6);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+    font-weight: 900;
+}
+
+/* امتیاز ثبت شده توسط پلیر 2 */
+.value-box.confirmed.player2 {
+    background: linear-gradient(135deg, #00FF7F, #00CC66);
+    color: #000;
+    border: 1px solid rgba(0, 255, 127, 0.6);
+    box-shadow: 0 4px 12px rgba(0, 255, 127, 0.4);
+    font-weight: 900;
+}
+
+/* جعبه قفل شده (غیرقابل تغییر) */
+.value-box.locked {
+    opacity: 0.5;
+    background: rgba(30, 30, 30, 0.8);
+    color: #888;
+}
+
+/* ======================================= */
+/* 🎲 بخش اصلی بازی (تاس‌ها و دکمه‌ها)     */
+/* ======================================= */
+
+/* جعبه اصلی مرکزی */
+#main-box {
+    background: rgba(30, 30, 46, 0.9);
+    padding: 15px;
+    border-radius: 12px;
+    width: 450px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* کانتینر تاس‌های سه‌بعدی */
+#dice-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 15px 0;
+    width: 100%;
+    min-height: 54px;
+}
+
+/* صحنه هر تاس */
+.scene {
+    perspective: 600px;
+    width: 51px;
+    height: 51px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    border-radius: 8px;  /* اضافه کردم */
+    background: rgba(255, 255, 255, 0.05);  /* اضافه کردم */
+    padding: 2px;  /* اضافه کردم */
+}
+
+/* تاس قفل شده */
+.scene.locked {
+    border: 2px solid rgba(255, 215, 0, 0.8);
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+}
+
+/* آیکون قفل روی تاس */
+.scene.locked::before {
+    content: '🔒';
+    position: absolute;
+    top: -9px;
+    right: -9px;
+    font-size: 14px;
+    z-index: 100;
+    filter: drop-shadow(0 0 5px gold);
+}
+
+/* مکعب سه‌بعدی تاس */
+.cube {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 1s cubic-bezier(.2,.9,.3,1);
+    transform: rotateX(-20deg) rotateY(20deg);
+}
+
+/* هر وجه تاس */
+.face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: linear-gradient(145deg, #2a0845, #1a0a3e);
+    backface-visibility: hidden;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.3);  /* تغییر از 0.15 به 0.3 */
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2);  /* اضافه کردم */
+}
+
+/* نقاط روی وجه تاس */
+.pip {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 0 6px currentColor;
+}
+
+/* رنگ نقاط هر وجه */
+.face.f1 .pip { background:#ff0033 !important; color:#ff0033 }
+.face.f2 .pip { background:#ffee55 !important; color:#ffee55 }
+.face.f3 .pip { background:#4ecbff !important; color:#4ecbff }
+.face.f4 .pip { background:#83ff4e !important; color:#83ff4e }
+.face.f5 .pip { background:#ff4ebd !important; color:#ff4ebd }
+.face.f6 .pip { background:#4efbff !important; color:#4efbff }
+
+/* گرید 3x3 برای چیدمان نقاط */
+.grid3 {
+    width: 80%;
+    height: 80%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 6%;
+    align-items: center;
+    justify-items: center;
+}
+
+/* موقعیت هر وجه در فضای سه‌بعدی */
+.f1 { transform: rotateX(90deg) translateZ(25.5px); }
+.f2 { transform: rotateY(90deg) translateZ(25.5px); }
+.f3 { transform: rotateY(0deg) translateZ(25.5px); }
+.f4 { transform: rotateY(180deg) translateZ(25.5px); }
+.f5 { transform: rotateY(-90deg) translateZ(25.5px); }
+.f6 { transform: rotateX(-90deg) translateZ(25.5px); }
+
+/* ======================================= */
+/* 🎮 بخش دکمه‌های بازی                   */
+/* ======================================= */
+
+/* ردیف دکمه‌ها */
+#button-row {
+    display: flex;
+    gap: 18px;
+    margin-top: 15px;
+    width: 100%;
+    justify-content: center;
+}
+
+/* دکمه عمومی بازی */
+.game-btn {
+    padding: 10px 30px;
+    font-size: 20px;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    min-width: 90px;
+    text-align: center;
+    font-family: 'Vazirmatn', sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+
+/* افکت درخشان برای دکمه‌ها */
+.game-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.7s;
+}
+
+.game-btn:hover::before {
+    left: 100%;
+}
+
+/* دکمه رول (تاس ریختن) */
+#roll-btn {
+    background: linear-gradient(135deg, #FF0080, #FF3399);
+    color: white;
+    box-shadow: 0 6px 18px rgba(255, 0, 128, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* دکمه پلی (ثبت امتیاز) */
+#play-btn {
+    background: linear-gradient(135deg, #6600cc, #9933ff);
+    color: white;
+    box-shadow: 0 6px 18px rgba(102, 0, 204, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* افکت هاور دکمه‌ها */
+.game-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* دکمه غیرفعال */
+.game-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    background: linear-gradient(135deg, #666, #444);
+}
+
+/* ======================================= */
+/* 🏆 بخش نتایج پایانی                    */
+/* ======================================= */
+
+/* صفحه نتایج */
+.results-screen {
+    background: rgba(20, 20, 40, 0.95);
+    padding: 24px;
+    border-radius: 15px;
+    width: 480px;
+    box-shadow: 0 15px 36px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    border: 2px solid rgba(138, 43, 226, 0.4);
+    display: none;
+    margin-top: 15px;
+    backdrop-filter: blur(10px);
+}
+
+/* عنوان صفحه نتایج */
+.results-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 18px;
+    color: #ffcc00;
+    text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+}
+
+/* ======================================= */
+/* 📱 بخش رسپانسیو (موبایل و تبلت)        */
+/* ======================================= */
+
+/* تبلت و موبایل‌های بزرگ */
+@media (max-width: 768px) {
+    body {
+        padding: 8px;
+    }
+    
+    #top-wrapper {
+        flex-direction: row;
+        flex-wrap: nowrap;  /* تغییر به nowrap */
+        justify-content: space-between;  /* تغییر به space-between */
+        gap: 5px;
+        width: 100%;
+    }
+    
+    .player-box {
+        width: 48%;  /* ساده‌تر */
+        min-width: 140px;
+        padding: 6px 8px;
+        flex: 1;  /* اضافه کردم */
+    }
+    
+    .player-title {
+        font-size: 14px;  /* اضافه کردم */
+    }
+    
+    .player-timer {
+        font-size: 12px;  /* اضافه کردم */
+        padding: 3px 6px;
+        min-width: 28px;
+    }
+    
+    #score-board {
+        width: 100%;
+        max-width: 100%;
+        padding: 10px;
+    }
+    
+    .score-header {
+        flex-direction: row;
+        gap: 3px;
+    }
+    
+    .score-column-title {
+        margin: 0 1px;
+        font-size: 13px;
+        padding: 5px 9px;
+    }
+    
+    .value-box {
+        width: 75px;
+        padding: 8px 10px;
+        font-size: 16px;
+    }
+    
+    .mini-dice {
+        width: 40px;
+        height: 40px;
+    }
+
+    .pip {
+        width: 7px;  /* افزایش از 5px */
+        height: 7px;  /* افزایش از 5px */
+    }
+    
+    #main-box {
+        width: 100%;
+        max-width: 100%;
+        padding: 10px;
+    }
+    
+    #dice-container {
+        gap: 8px;
+    }
+    
+    .scene {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .game-btn {
+        padding: 14px 28px;
+        font-size: 18px;
+        min-width: 120px;
+        width: auto;
+    }
+    
+    .results-screen {
+        width: 100%;
+        padding: 15px;
+    }
+}
+
+/* انیمیشن‌های اضافی */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes scorePop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* نشانگر نوبت */
+.turn-indicator {
+    position: absolute;
+    top: -10px;
+    right: 50%;
+    transform: translateX(50%);
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #000;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: bold;
+    animation: pulse 1s infinite;
+    z-index: 10;
+    display: none;
+}
+
+.player-box.active-player .turn-indicator {
+    display: block;
+}
+
+/* پیام نوبت از دست رفته */
+.turn-lost-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 0, 0, 0.9);
+    color: white;
+    padding: 20px 30px;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    z-index: 1000;
+    animation: fadeInOut 2s forwards;
+    box-shadow: 0 0 30px rgba(255, 0, 0, 0.7);
+    text-align: center;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    20% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+    80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+}
