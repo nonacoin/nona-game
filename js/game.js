@@ -1,3 +1,4 @@
+
 /* ======================================= */
 /* 🎯 متغیرهای اصلی بازی                   */
 /* ======================================= */
@@ -10,6 +11,7 @@ const timeoutSound = document.getElementById('timeoutSound');
 const warningSound = document.getElementById('warningSound');
 const tickSound = document.getElementById('tickSound');
 
+// تنظیمات صداها
 [diceSound, lockSound, selectSound, confirmSound, timeoutSound, warningSound, tickSound].forEach(sound => {
     sound.volume = 0.7;
     sound.preload = 'auto';
@@ -64,7 +66,7 @@ let timerInterval = null;
 let timeLeft = 30;
 const TOTAL_TIME = 30;
 let warningPlayed = false;
-let isTimeUpProcessing = false;
+let isTimeUpProcessing = false; // برای جلوگیری از اجرای همزمان timeUp
 
 function startTimer() {
     if (gameState.gameFinished) return;
@@ -83,8 +85,10 @@ function startTimer() {
         timeLeft--;
         updateTimerDisplay();
         
+        // تپش قلب با هر ثانیه
         pulseTimer();
         
+        // 10 ثانیه آخر
         if (timeLeft <= 10) {
             enableWarningMode();
             if (timeLeft <= 5 && !warningPlayed) {
@@ -158,13 +162,14 @@ function updateTimerDisplay() {
 }
 
 function timeUp() {
-    if (isTimeUpProcessing) return;
+    if (isTimeUpProcessing) return; // اگر در حال پردازش هستیم، دوباره اجرا نکن
     isTimeUpProcessing = true;
     
     clearInterval(timerInterval);
     timeoutSound.currentTime = 0;
     timeoutSound.play();
     
+    // نمایش پیام نوبت از دست رفته
     showTurnLostMessage();
     
     setTimeout(() => {
@@ -174,7 +179,7 @@ function timeUp() {
             autoSelectAndConfirm();
         }
         isTimeUpProcessing = false;
-    }, 1000);
+    }, 1000); // یک ثانیه تأخیر برای نمایش پیام
 }
 
 function showTurnLostMessage() {
@@ -190,6 +195,7 @@ function showTurnLostMessage() {
     }, 2000);
 }
 
+/* ثبت خودکار دسته انتخاب شده */
 function autoConfirmSelection() {
     const { player, rowIndex } = gameState.selectedCategory;
     const playerKey = `player${player}`;
@@ -197,9 +203,11 @@ function autoConfirmSelection() {
     const score = potentialScores[rowIndex];
     gameState.confirmedCategories[playerKey][rowIndex] = score;
     
+    // پخش صدای ثبت
     confirmSound.currentTime = 0;
     confirmSound.play();
     
+    // نمایش پیام ثبت خودکار
     showAutoConfirmMessage(player, rowIndex, score);
     
     setTimeout(() => {
@@ -223,11 +231,13 @@ function showAutoConfirmMessage(player, rowIndex, score) {
     }, 1500);
 }
 
+/* انتخاب و ثبت خودکار (وقتی کاربر چیزی انتخاب نکرده) */
 function autoSelectAndConfirm() {
     const playerKey = `player${gameState.currentPlayer}`;
     const potentialScores = calculatePotentialScores();
     let availableIndex = -1;
     
+    // پیدا کردن اولین دسته خالی
     for (let i = 0; i < 6; i++) {
         if (gameState.confirmedCategories[playerKey][i] === null) { 
             availableIndex = i; 
@@ -235,9 +245,11 @@ function autoSelectAndConfirm() {
         }
     }
     
+    // اگر دسته خالی پیدا شد، امتیاز 0 ثبت کن
     if (availableIndex !== -1) {
         gameState.confirmedCategories[playerKey][availableIndex] = 0;
         
+        // نمایش پیام
         const message = document.createElement('div');
         message.className = 'turn-lost-message';
         message.style.background = 'linear-gradient(135deg, #FF3333, #CC0000)';
@@ -287,6 +299,7 @@ function calculatePotentialScores() {
 
 function renderScoreBoard() {
     const container = document.getElementById('score-board');
+    // هدر قبلاً در HTML تعریف شده، فقط ردیف‌ها را اضافه می‌کنیم
     const existingHeader = container.querySelector('.score-header');
     container.innerHTML = '';
     container.appendChild(existingHeader);
@@ -297,6 +310,7 @@ function renderScoreBoard() {
         row.dataset.category = i-1;
         row.dataset.value = i;
 
+        // ستون پلیر 1
         const col1 = document.createElement('div');
         col1.className = 'score-column';
         
@@ -308,6 +322,7 @@ function renderScoreBoard() {
         input1.value = '0';
         col1.appendChild(input1);
 
+        // ستون تاس (وسط)
         const colDice = document.createElement('div');
         colDice.className = 'score-column dice';
         
@@ -318,6 +333,7 @@ function renderScoreBoard() {
         img.title = `برای ثبت امتیاز ${i} کلیک کنید`;
         colDice.appendChild(img);
 
+        // ستون پلیر 2
         const col2 = document.createElement('div');
         col2.className = 'score-column';
         
@@ -333,6 +349,7 @@ function renderScoreBoard() {
         row.appendChild(colDice);
         row.appendChild(col2);
 
+        // رویداد کلیک برای انتخاب دسته
         row.addEventListener('click', () => {
             if (gameState.gameFinished) return;
             if (gameState.rollCount === 0) return;
@@ -379,6 +396,7 @@ function updateScoreDisplays() {
         const conf1 = gameState.confirmedCategories.player1[index];
         const conf2 = gameState.confirmedCategories.player2[index];
 
+        // پلیر 1
         if (conf1 !== null) {
             input1.value = conf1;
             input1.classList.add('confirmed','player1');
@@ -394,6 +412,7 @@ function updateScoreDisplays() {
             }
         }
 
+        // پلیر 2
         if (conf2 !== null) {
             input2.value = conf2;
             input2.classList.add('confirmed','player2');
@@ -582,6 +601,7 @@ document.getElementById("play-btn").addEventListener("click", function() {
 
     gameState.confirmedCategories[playerKey][rowIndex] = score;
     
+    // افکت انیمیشن برای امتیاز ثبت شده
     const selectedRow = document.querySelector('#score-board .score-row.selected');
     if (selectedRow) {
         const valueBox = selectedRow.querySelector(`.value-box[data-player="${player}"]`);
