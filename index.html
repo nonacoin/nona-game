@@ -2,7 +2,8 @@
 <html>
 <head>
     <title>تست سوپا</title>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- استفاده از CDN جایگزین -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
 </head>
 <body>
     <h1>تست اتصال سوپا</h1>
@@ -16,71 +17,74 @@
     <div id="output"></div>
 
     <script>
+        // تعریف متغیرها در بالاترین سطح
         const supabaseUrl = 'https://xouwoemiyxnugontsles.supabase.co';
         const supabaseKey = 'sb_publishable_MFoTbKuCDjhVCs1-xvKNag_UwhV0tF-';
         
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-        
-        function testConnection() {
-            document.getElementById('output').innerHTML = 'در حال تست اتصال...';
+        // بررسی وجود کتابخانه
+        if (typeof supabase === 'undefined') {
+            document.getElementById('output').innerHTML = 
+                '❌ کتابخانه Supabase بارگذاری نشد. لطفاً صفحه را رفرش کنید.';
+        } else {
+            const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
             
-            supabase.from('game_rooms_v0').select('count').limit(1)
-                .then(response => {
-                    if (response.error) {
-                        document.getElementById('output').innerHTML = 'خطا: ' + response.error.message;
-                    } else {
-                        document.getElementById('output').innerHTML = '✅ اتصال موفق';
-                    }
+            // توابع با استفاده از supabaseClient
+            function testConnection() {
+                document.getElementById('output').innerHTML = 'در حال تست اتصال...';
+                supabaseClient.from('game_rooms_v0').select('count', { count: 'exact', head: true })
+                    .then(response => {
+                        if (response.error) throw response.error;
+                        document.getElementById('output').innerHTML = 
+                            '✅ اتصال موفق<br>تعداد رکوردها: ' + response.count;
+                    })
+                    .catch(error => {
+                        document.getElementById('output').innerHTML = '❌ خطا: ' + error.message;
+                    });
+            }
+            
+            function readData() {
+                document.getElementById('output').innerHTML = 'در حال خواندن...';
+                Promise.all([
+                    supabaseClient.from('game_rooms_v0').select('*').limit(5),
+                    supabaseClient.from('game_room_players_v0').select('*').limit(5)
+                ])
+                .then(([rooms, players]) => {
+                    let html = '<h3>داده‌های خوانده شده:</h3>';
+                    html += '<h4>اتاق‌ها (' + rooms.data.length + '):</h4>';
+                    html += '<pre>' + JSON.stringify(rooms.data, null, 2) + '</pre>';
+                    html += '<h4>بازیکنان (' + players.data.length + '):</h4>';
+                    html += '<pre>' + JSON.stringify(players.data, null, 2) + '</pre>';
+                    document.getElementById('output').innerHTML = html;
                 })
                 .catch(error => {
-                    document.getElementById('output').innerHTML = 'خطا: ' + error.message;
+                    document.getElementById('output').innerHTML = '❌ خطا در خواندن: ' + error.message;
                 });
-        }
-        
-        function readData() {
-            document.getElementById('output').innerHTML = 'در حال خواندن...';
+            }
             
-            Promise.all([
-                supabase.from('game_rooms_v0').select('*').limit(5),
-                supabase.from('game_room_players_v0').select('*').limit(5)
-            ])
-            .then(([rooms, players]) => {
-                let html = '<h3>داده‌های خوانده شده:</h3>';
-                html += '<h4>اتاق‌ها:</h4>';
-                html += '<pre>' + JSON.stringify(rooms.data, null, 2) + '</pre>';
-                html += '<h4>بازیکنان:</h4>';
-                html += '<pre>' + JSON.stringify(players.data, null, 2) + '</pre>';
+            function writeTest() {
+                document.getElementById('output').innerHTML = 'در حال نوشتن داده تست...';
+                const testRoom = {
+                    room_code: 'TEST_' + Math.random().toString(36).substr(2, 5).toUpperCase(),
+                    room_status: 'waiting',
+                    debug_note: 'تست از صفحه HTML - ' + new Date().toLocaleString('fa-IR')
+                };
                 
-                document.getElementById('output').innerHTML = html;
-            })
-            .catch(error => {
-                document.getElementById('output').innerHTML = 'خطا در خواندن: ' + error.message;
-            });
-        }
-        
-        function writeTest() {
-            document.getElementById('output').innerHTML = 'در حال نوشتن داده تست...';
-            
-            const testRoom = {
-                room_code: 'TEST_' + Math.random().toString(36).substr(2, 5).toUpperCase(),
-                room_status: 'waiting',
-                debug_note: 'تست از صفحه HTML - ' + new Date().toISOString()
-            };
-            
-            supabase.from('game_rooms_v0')
-                .insert([testRoom])
-                .then(response => {
-                    if (response.error) {
-                        document.getElementById('output').innerHTML = 'خطا در نوشتن: ' + response.error.message;
-                    } else {
+                supabaseClient.from('game_rooms_v0')
+                    .insert([testRoom])
+                    .select()
+                    .then(response => {
+                        if (response.error) throw response.error;
                         document.getElementById('output').innerHTML = 
                             '✅ نوشتن موفق<br>داده ایجاد شده:<br><pre>' + 
                             JSON.stringify(response.data[0], null, 2) + '</pre>';
-                    }
-                })
-                .catch(error => {
-                    document.getElementById('output').innerHTML = 'خطا: ' + error.message;
-                });
+                    })
+                    .catch(error => {
+                        document.getElementById('output').innerHTML = '❌ خطا در نوشتن: ' + error.message;
+                    });
+            }
+            
+            // پیام اولیه
+            document.getElementById('output').innerHTML = '✅ کتابخانه Supabase بارگذاری شد. دکمه‌ها را تست کنید.';
         }
     </script>
 </body>
