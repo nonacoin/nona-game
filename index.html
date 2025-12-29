@@ -7,72 +7,82 @@
 <body>
     <h1>تست اتصال سوپا</h1>
     <div>
-        <button onclick="testConnection()">تست اتصال</button>
-        <button onclick="readData()">خواندن داده</button>
-        <button onclick="writeTest()">نوشتن تست</button>
+        <button onclick="testConnection()">Test Connection</button>
+        <button onclick="readData()">Read Data</button>
+        <button onclick="writeTest()">Write Test</button>
     </div>
-    <div id="output"></div>
+    <div id="output">Loading Supabase library...</div>
 
     <script>
-        // 🔴 کلید زیر را REPLACE کنید:
-        // 1. به پروژه Supabase بروید
-        // 2. Settings > API
-        // 3. از بخش "Project API keys" یکی از کلیدها را کپی کنید
-        // 4. یا RLS را غیرفعال کنید (Authentication > Policies)
-        
         const supabaseUrl = 'https://xouwoemiyxnugontsles.supabase.co';
-        
-        // گزینه‌های کلید (یکی را انتخاب کنید):
-        // a) اگر RLS غیرفعال شد، از همان کلید قبلی استفاده کنید
-        // b) اگر RLS فعال است، از Service Role Key استفاده کنید (مخفی!)
-        const supabaseKey = 'کلید-جدید-اینجا-قرار-گیرد'; // 🔴 جایگزین کنید
+        // 🔴 استفاده موقت از Service Role Key فقط برای تست
+        const supabaseKey = 'sb_secret_cFMezy39Q6foSYaR2IVYjw_wBVoCsAY';
         
         if (typeof supabase === 'undefined') {
-            document.getElementById('output').innerHTML = 
-                '❌ کتابخانه Supabase بارگذاری نشد.';
+            document.getElementById('output').innerHTML = 'ERROR: Supabase library failed to load';
         } else {
             const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
             
             function testConnection() {
-                document.getElementById('output').innerHTML = 'در حال تست اتصال...';
-                supabaseClient.from('game_rooms_v0').select('*', { count: 'exact', head: true })
+                document.getElementById('output').innerHTML = 'Testing connection...';
+                supabaseClient.from('game_rooms_v0')
+                    .select('*', { count: 'exact', head: true })
                     .then(response => {
                         if (response.error) {
                             document.getElementById('output').innerHTML = 
-                                '❌ خطا: ' + response.error.message + 
-                                '<br><br>🔧 راه‌حل:<br>' +
-                                '1. به پروژه Supabase بروید<br>' +
+                                'ERROR: ' + response.error.message + 
+                                '<br><br>SOLUTION:<br>' +
+                                '1. Go to Supabase project<br>' +
                                 '2. Authentication > Policies<br>' +
-                                '3. RLS را برای جدول‌ها غیرفعال کنید<br>' +
-                                '4. یا از Service Role Key استفاده کنید';
+                                '3. Disable RLS for tables<br>' +
+                                '4. Or check API key';
                         } else {
                             document.getElementById('output').innerHTML = 
-                                '✅ اتصال موفق<br>تعداد رکوردها: ' + response.count;
+                                'SUCCESS: Connected<br>Record count: ' + response.count;
                         }
+                    })
+                    .catch(error => {
+                        document.getElementById('output').innerHTML = 'ERROR: ' + error.message;
                     });
             }
             
-            // توابع readData و writeTest مانند قبل باقی می‌مانند
             function readData() {
-                document.getElementById('output').innerHTML = 'در حال خواندن...';
+                document.getElementById('output').innerHTML = 'Reading data...';
                 Promise.all([
-                    supabaseClient.from('game_rooms_v0').select('*').limit(5),
-                    supabaseClient.from('game_room_players_v0').select('*').limit(5)
+                    supabaseClient.from('game_rooms_v0').select('*').limit(3),
+                    supabaseClient.from('game_room_players_v0').select('*').limit(3)
                 ])
                 .then(([rooms, players]) => {
-                    let html = '<h3>داده‌های خوانده شده:</h3>';
-                    html += rooms.data ? `<h4>اتاق‌ها (${rooms.data.length}):</h4><pre>${JSON.stringify(rooms.data,null,2)}</pre>` : 'خطا در خواندن اتاق‌ها';
-                    html += players.data ? `<h4>بازیکنان (${players.data.length}):</h4><pre>${JSON.stringify(players.data,null,2)}</pre>` : 'خطا در خواندن بازیکنان';
+                    let html = '<h3>Data Read:</h3>';
+                    
+                    if (rooms.error) {
+                        html += '<p style="color:red">Rooms error: ' + rooms.error.message + '</p>';
+                    } else {
+                        html += '<h4>Rooms (' + rooms.data.length + '):</h4>';
+                        html += '<pre>' + JSON.stringify(rooms.data, null, 2) + '</pre>';
+                    }
+                    
+                    if (players.error) {
+                        html += '<p style="color:red">Players error: ' + players.error.message + '</p>';
+                    } else {
+                        html += '<h4>Players (' + players.data.length + '):</h4>';
+                        html += '<pre>' + JSON.stringify(players.data, null, 2) + '</pre>';
+                    }
+                    
                     document.getElementById('output').innerHTML = html;
+                })
+                .catch(error => {
+                    document.getElementById('output').innerHTML = 'ERROR: ' + error.message;
                 });
             }
             
             function writeTest() {
-                document.getElementById('output').innerHTML = 'در حال نوشتن داده تست...';
+                document.getElementById('output').innerHTML = 'Writing test data...';
+                
                 const testRoom = {
                     room_code: 'TEST_' + Math.random().toString(36).substr(2, 5).toUpperCase(),
                     room_status: 'waiting',
-                    debug_note: 'تست از صفحه HTML - ' + new Date().toLocaleString('fa-IR')
+                    debug_note: 'Test from HTML - ' + new Date().toISOString()
                 };
                 
                 supabaseClient.from('game_rooms_v0')
@@ -81,18 +91,20 @@
                     .then(response => {
                         if (response.error) {
                             document.getElementById('output').innerHTML = 
-                                '❌ خطا در نوشتن: ' + response.error.message;
+                                'WRITE ERROR: ' + response.error.message;
                         } else {
                             document.getElementById('output').innerHTML = 
-                                '✅ نوشتن موفق<br>داده ایجاد شده:<br><pre>' + 
+                                'WRITE SUCCESS<br>Created data:<br><pre>' + 
                                 JSON.stringify(response.data[0], null, 2) + '</pre>';
                         }
+                    })
+                    .catch(error => {
+                        document.getElementById('output').innerHTML = 'ERROR: ' + error.message;
                     });
             }
             
-            document.getElementById('output').innerHTML = 
-                '✅ کتابخانه بارگذاری شد.<br>' +
-                '⚠️ اگر دکمه‌ها خطای 401 می‌دهند، کلید API را در خط 26 کد جایگزین کنید.';
+            // Auto-test on load
+            setTimeout(testConnection, 1000);
         }
     </script>
 </body>
