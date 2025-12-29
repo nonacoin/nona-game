@@ -1,111 +1,46 @@
 <!DOCTYPE html>
-<html>
+<html lang="fa" dir="rtl">
 <head>
-    <title>تست سوپا</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
+  <meta charset="UTF-8">
+  <title>Supabase Connection Test</title>
 </head>
 <body>
-    <h1>تست اتصال سوپا</h1>
-    <div>
-        <button onclick="testConnection()">Test Connection</button>
-        <button onclick="readData()">Read Data</button>
-        <button onclick="writeTest()">Write Test</button>
-    </div>
-    <div id="output">Loading Supabase library...</div>
 
-    <script>
-        const supabaseUrl = 'https://xouwoemiyxnugontsles.supabase.co';
-        // 🔴 استفاده موقت از Service Role Key فقط برای تست
-        const supabaseKey = 'sb_secret_cFMezy39Q6foSYaR2IVYjw_wBVoCsAY';
-        
-        if (typeof supabase === 'undefined') {
-            document.getElementById('output').innerHTML = 'ERROR: Supabase library failed to load';
-        } else {
-            const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
-            
-            function testConnection() {
-                document.getElementById('output').innerHTML = 'Testing connection...';
-                supabaseClient.from('game_rooms_v0')
-                    .select('*', { count: 'exact', head: true })
-                    .then(response => {
-                        if (response.error) {
-                            document.getElementById('output').innerHTML = 
-                                'ERROR: ' + response.error.message + 
-                                '<br><br>SOLUTION:<br>' +
-                                '1. Go to Supabase project<br>' +
-                                '2. Authentication > Policies<br>' +
-                                '3. Disable RLS for tables<br>' +
-                                '4. Or check API key';
-                        } else {
-                            document.getElementById('output').innerHTML = 
-                                'SUCCESS: Connected<br>Record count: ' + response.count;
-                        }
-                    })
-                    .catch(error => {
-                        document.getElementById('output').innerHTML = 'ERROR: ' + error.message;
-                    });
-            }
-            
-            function readData() {
-                document.getElementById('output').innerHTML = 'Reading data...';
-                Promise.all([
-                    supabaseClient.from('game_rooms_v0').select('*').limit(3),
-                    supabaseClient.from('game_room_players_v0').select('*').limit(3)
-                ])
-                .then(([rooms, players]) => {
-                    let html = '<h3>Data Read:</h3>';
-                    
-                    if (rooms.error) {
-                        html += '<p style="color:red">Rooms error: ' + rooms.error.message + '</p>';
-                    } else {
-                        html += '<h4>Rooms (' + rooms.data.length + '):</h4>';
-                        html += '<pre>' + JSON.stringify(rooms.data, null, 2) + '</pre>';
-                    }
-                    
-                    if (players.error) {
-                        html += '<p style="color:red">Players error: ' + players.error.message + '</p>';
-                    } else {
-                        html += '<h4>Players (' + players.data.length + '):</h4>';
-                        html += '<pre>' + JSON.stringify(players.data, null, 2) + '</pre>';
-                    }
-                    
-                    document.getElementById('output').innerHTML = html;
-                })
-                .catch(error => {
-                    document.getElementById('output').innerHTML = 'ERROR: ' + error.message;
-                });
-            }
-            
-            function writeTest() {
-                document.getElementById('output').innerHTML = 'Writing test data...';
-                
-                const testRoom = {
-                    room_code: 'TEST_' + Math.random().toString(36).substr(2, 5).toUpperCase(),
-                    room_status: 'waiting',
-                    debug_note: 'Test from HTML - ' + new Date().toISOString()
-                };
-                
-                supabaseClient.from('game_rooms_v0')
-                    .insert([testRoom])
-                    .select()
-                    .then(response => {
-                        if (response.error) {
-                            document.getElementById('output').innerHTML = 
-                                'WRITE ERROR: ' + response.error.message;
-                        } else {
-                            document.getElementById('output').innerHTML = 
-                                'WRITE SUCCESS<br>Created data:<br><pre>' + 
-                                JSON.stringify(response.data[0], null, 2) + '</pre>';
-                        }
-                    })
-                    .catch(error => {
-                        document.getElementById('output').innerHTML = 'ERROR: ' + error.message;
-                    });
-            }
-            
-            // Auto-test on load
-            setTimeout(testConnection, 1000);
-        }
-    </script>
+<h2>Supabase Connection Test</h2>
+<button id="testBtn">Test Connection</button>
+
+<pre id="output"></pre>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // ====== REQUIRED CONFIG (DO NOT GUESS) ======
+  const SUPABASE_URL = "https://xouwoemiyxnugontsles.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_MFoTbKuCDjhVCs1-xvKNag_UwhV0tF-";
+  const TABLE_NAME = "PUT_TABLE_NAME_HERE";
+  // ============================================
+
+  const supabase = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+
+  const output = document.getElementById("output");
+
+  document.getElementById("testBtn").addEventListener("click", async () => {
+    output.textContent = "Testing connection...";
+
+    const { data, error } = await supabase
+      .from(TABLE_NAME)
+      .select("*")
+      .limit(1);
+
+    if (error) {
+      output.textContent = "ERROR:\n" + JSON.stringify(error, null, 2);
+    } else {
+      output.textContent = "SUCCESS:\n" + JSON.stringify(data, null, 2);
+    }
+  });
+</script>
+
 </body>
 </html>
