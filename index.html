@@ -16,10 +16,10 @@
   // ====== REQUIRED CONFIG (DO NOT GUESS) ======
   const SUPABASE_URL = "https://xouwoemiyxnugontsles.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_MFoTbKuCDjhVCs1-xvKNag_UwhV0tF-";
-  const TABLE_NAME = "PUT_TABLE_NAME_HERE";
+  const TABLE_NAME = "game_room_players_v0";
   // ============================================
 
-  const supabase = supabase.createClient(
+  const supabaseClient = supabase.createClient(
     SUPABASE_URL,
     SUPABASE_ANON_KEY
   );
@@ -29,7 +29,7 @@
   document.getElementById("testBtn").addEventListener("click", async () => {
     output.textContent = "Testing connection...";
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from(TABLE_NAME)
       .select("*")
       .limit(1);
