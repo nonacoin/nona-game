@@ -20,5 +20,14 @@ window.GameStateManager = {
             console.error('❌ خطا در بازیابی localStorage:', error);
             return null;
         }
+    },
+    
+    clearLocalStorage: function(roomId) {
+        try {
+            localStorage.removeItem('dice_party_' + roomId);
+            console.log('🧹 localStorage پاک شد');
+        } catch (error) {
+            console.error('❌ خطا در پاک کردن localStorage:', error);
+        }
     }
 };
