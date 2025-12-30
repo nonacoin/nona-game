@@ -9,25 +9,29 @@
         .result { padding: 15px; margin: 10px 0; border-radius: 8px; }
         .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; margin: 5px; }
     </style>
 </head>
 <body>
     <h1>🔗 تست اتصال به Supabase</h1>
     
-    <button onclick="testConnection()">تست اتصال</button>
-    <button onclick="testReadData()">تست خواندن داده</button>
-    <button onclick="testWriteData()">تست نوشتن داده</button>
+    <div>
+        <button id="testConnectionBtn">تست اتصال</button>
+        <button id="testReadDataBtn">تست خواندن داده</button>
+        <button id="testWriteDataBtn">تست نوشتن داده</button>
+    </div>
     
     <div id="results"></div>
 
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script>
+        // متغیرهای گلوبال
+        let supabaseClient = null;
+        
+        // تنظیمات Supabase
         const SUPABASE_URL = 'https://xouwoemiyxnugontsles.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_MFoTbKuCDjhVCs1-xvKNag_UwhV0tF-';
-        
-        let supabase;
-        
+
         // تابع نمایش نتایج
         function showResult(message, isSuccess = true) {
             const div = document.createElement('div');
@@ -39,7 +43,7 @@
         // ۱. تست اتصال اولیه
         async function testConnection() {
             try {
-                supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
                 showResult('✅ اتصال اولیه برقرار شد');
                 return true;
             } catch (error) {
@@ -50,13 +54,13 @@
 
         // ۲. تست خواندن داده از جدول
         async function testReadData() {
-            if (!supabase) {
+            if (!supabaseClient) {
                 showResult('⚠️ ابتدا دکمه "تست اتصال" را بزنید', false);
                 return;
             }
 
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('dice_party_games')
                     .select('*')
                     .limit(5);
@@ -73,7 +77,7 @@
 
         // ۳. تست نوشتن داده (یک رکورد تست)
         async function testWriteData() {
-            if (!supabase) {
+            if (!supabaseClient) {
                 showResult('⚠️ ابتدا دکمه "تست اتصال" را بزنید', false);
                 return;
             }
@@ -88,7 +92,7 @@
             };
 
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('dice_party_games')
                     .insert([testData])
                     .select();
@@ -103,12 +107,14 @@
             }
         }
 
-        // تست خودکار هنگام لود صفحه
-        window.onload = async () => {
-            showResult('🔄 شروع تست‌ها...');
-            await testConnection();
-            setTimeout(testReadData, 1000);
-        };
+        // تنظیم event listeners بعد از لود کامل صفحه
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('testConnectionBtn').addEventListener('click', testConnection);
+            document.getElementById('testReadDataBtn').addEventListener('click', testReadData);
+            document.getElementById('testWriteDataBtn').addEventListener('click', testWriteData);
+            
+            showResult('🔄 صفحه تست لود شد. برای شروع دکمه "تست اتصال" را بزنید.');
+        });
     </script>
 </body>
 </html>
