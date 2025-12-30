@@ -28,7 +28,7 @@
     output.textContent = "Testing connection...";
 
     const { data, error } = await client
-      .from("game_room_players_v0")
+      .from("dice_party_games")
       .select("*")
       .limit(1);
 
