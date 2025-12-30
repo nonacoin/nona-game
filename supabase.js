@@ -1,4 +1,4 @@
-// فایل supabase.js - بدون export
+// فایل supabase.js - بدون تست
 const SUPABASE_URL = 'https://xouwoemiyxnugontsles.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_MFoTbKuCDjhVCs1-xvKNag_UwhV0tF-';
 
@@ -6,15 +6,17 @@ try {
     window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     console.log('✅ Supabase برای بازی وصل شد');
     
+    // تست ساده‌تر بدون تابع RPC
     setTimeout(() => {
-        window.supabase.rpc('test_game_connection').then(result => {
-            if (result.data) {
-                console.log('🎯 سرور بازی پاسخ داد:', result.data.message);
-            }
-            if (result.error) {
-                console.warn('⚠️  خطا در تست:', result.error.message);
-            }
-        });
+        window.supabase
+            .from('dice_party_games')
+            .select('room_id')
+            .limit(1)
+            .then(result => {
+                if (!result.error) {
+                    console.log('🎯 اتصال به دیتابیس موفق');
+                }
+            });
     }, 1000);
     
 } catch (error) {
