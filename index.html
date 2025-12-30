@@ -1,120 +1,77 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تست اتصال Supabase</title>
+    <title>تنظیم پالیسی‌های Supabase</title>
     <style>
-        body { font-family: Vazirmatn, sans-serif; padding: 20px; background: #f0f0f0; }
-        .result { padding: 15px; margin: 10px 0; border-radius: 8px; }
-        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        button { padding: 10px 20px; font-size: 16px; cursor: pointer; margin: 5px; }
+        body { font-family: sans-serif; padding: 20px; }
+        .code { background: #f5f5f5; padding: 15px; border-radius: 5px; font-family: monospace; }
+        button { padding: 10px 15px; margin: 10px 0; cursor: pointer; }
     </style>
 </head>
 <body>
-    <h1>🔗 تست اتصال به Supabase</h1>
+    <h1>🛡️ تنظیم پالیسی‌های Supabase</h1>
     
-    <div>
-        <button id="testConnectionBtn">تست اتصال</button>
-        <button id="testReadDataBtn">تست خواندن داده</button>
-        <button id="testWriteDataBtn">تست نوشتن داده</button>
+    <h2>روش ۱: غیرفعال کردن RLS (برای تست)</h2>
+    <div class="code">
+        ALTER TABLE dice_party_games DISABLE ROW LEVEL SECURITY;
+    </div>
+    <p>این کد را در SQL Editor اجرا کنید.</p>
+    
+    <h2>روش ۲: ایجاد پالیسی عمومی (برای تست)</h2>
+    <div class="code">
+        -- فعال کردن RLS<br>
+        ALTER TABLE dice_party_games ENABLE ROW LEVEL SECURITY;<br><br>
+        
+        -- پالیسی SELECT<br>
+        CREATE POLICY "Allow public read access" ON dice_party_games<br>
+        FOR SELECT USING (true);<br><br>
+        
+        -- پالیسی INSERT<br>
+        CREATE POLICY "Allow public insert access" ON dice_party_games<br>
+        FOR INSERT WITH CHECK (true);<br><br>
+        
+        -- پالیسی UPDATE<br>
+        CREATE POLICY "Allow public update access" ON dice_party_games<br>
+        FOR UPDATE USING (true) WITH CHECK (true);
     </div>
     
-    <div id="results"></div>
-
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script>
-        // متغیرهای گلوبال
-        let supabaseClient = null;
+    <h2>روش ۳: پالیسی امن برای بازی (پیشنهادی)</h2>
+    <div class="code">
+        -- فعال کردن RLS<br>
+        ALTER TABLE dice_party_games ENABLE ROW LEVEL SECURITY;<br><br>
         
-        // تنظیمات Supabase
-        const SUPABASE_URL = 'https://xouwoemiyxnugontsles.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_MFoTbKuCDjhVCs1-xvKNag_UwhV0tF-';
-
-        // تابع نمایش نتایج
-        function showResult(message, isSuccess = true) {
-            const div = document.createElement('div');
-            div.className = `result ${isSuccess ? 'success' : 'error'}`;
-            div.innerHTML = `⏱️ ${new Date().toLocaleTimeString('fa-IR')}<br>${message}`;
-            document.getElementById('results').prepend(div);
-        }
-
-        // ۱. تست اتصال اولیه
-        async function testConnection() {
-            try {
-                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-                showResult('✅ اتصال اولیه برقرار شد');
-                return true;
-            } catch (error) {
-                showResult(`❌ خطا در اتصال: ${error.message}`, false);
-                return false;
-            }
-        }
-
-        // ۲. تست خواندن داده از جدول
-        async function testReadData() {
-            if (!supabaseClient) {
-                showResult('⚠️ ابتدا دکمه "تست اتصال" را بزنید', false);
-                return;
-            }
-
-            try {
-                const { data, error } = await supabaseClient
-                    .from('dice_party_games')
-                    .select('*')
-                    .limit(5);
-
-                if (error) {
-                    showResult(`❌ خطا در خواندن داده: ${error.message}`, false);
-                } else {
-                    showResult(`✅ خواندن داده موفق. ${data.length} رکورد یافت شد:<br><pre>${JSON.stringify(data, null, 2)}</pre>`);
-                }
-            } catch (error) {
-                showResult(`❌ خطا: ${error.message}`, false);
-            }
-        }
-
-        // ۳. تست نوشتن داده (یک رکورد تست)
-        async function testWriteData() {
-            if (!supabaseClient) {
-                showResult('⚠️ ابتدا دکمه "تست اتصال" را بزنید', false);
-                return;
-            }
-
-            const testData = {
-                room_id: 'test_room_' + Date.now(),
-                player1_username: 'test_user_1',
-                player2_username: 'test_user_2',
-                current_player: 1,
-                time_left: 30,
-                roll_count: 0
-            };
-
-            try {
-                const { data, error } = await supabaseClient
-                    .from('dice_party_games')
-                    .insert([testData])
-                    .select();
-
-                if (error) {
-                    showResult(`❌ خطا در نوشتن داده: ${error.message}<br>کد خطا: ${error.code}`, false);
-                } else {
-                    showResult(`✅ نوشتن داده موفق. ID: ${data[0].id}`);
-                }
-            } catch (error) {
-                showResult(`❌ خطا: ${error.message}`, false);
-            }
-        }
-
-        // تنظیم event listeners بعد از لود کامل صفحه
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('testConnectionBtn').addEventListener('click', testConnection);
-            document.getElementById('testReadDataBtn').addEventListener('click', testReadData);
-            document.getElementById('testWriteDataBtn').addEventListener('click', testWriteData);
-            
-            showResult('🔄 صفحه تست لود شد. برای شروع دکمه "تست اتصال" را بزنید.');
-        });
-    </script>
+        -- هر کسی می‌تواند بازی‌ها را ببیند<br>
+        CREATE POLICY "Anyone can view games" ON dice_party_games<br>
+        FOR SELECT USING (true);<br><br>
+        
+        -- فقط اتاق‌های مربوط به کاربر قابل آپدیت<br>
+        CREATE POLICY "Users can update their games" ON dice_party_games<br>
+        FOR UPDATE USING (<br>
+            room_id LIKE 'user_%' OR <br>
+            auth.uid()::text IN (player1_telegram_id, player2_telegram_id)<br>
+        );<br><br>
+        
+        -- هر کسی می‌تواند بازی جدید ایجاد کند<br>
+        CREATE POLICY "Anyone can create games" ON dice_party_games<br>
+        FOR INSERT WITH CHECK (true);
+    </div>
+    
+    <h2>نحوه اجرا:</h2>
+    <ol>
+        <li>به <a href="https://app.supabase.com" target="_blank">داشبورد Supabase</a> بروید</li>
+        <li>پروژه خود را انتخاب کنید</li>
+        <li>از منوی سمت چپ به SQL Editor بروید</li>
+        <li>کد دلخواه را در ویرایشگر کپی کنید</li>
+        <li>روی دکمه Run کلیک کنید</li>
+        <li>بعد از موفقیت، تست را مجدداً انجام دهید</li>
+    </ol>
+    
+    <button onclick="window.open('https://app.supabase.com', '_blank')">
+        باز کردن داشبورد Supabase
+    </button>
+    <button onclick="location.reload()">
+        بروزرسانی صفحه
+    </button>
 </body>
 </html>
