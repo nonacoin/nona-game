@@ -1,168 +1,43 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<title>Dice Game</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- ================= SUPABASE CDN ================= -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<style>
-/* ====== CSS بازی (بدون تغییر) ====== */
-body {
-  font-family: sans-serif;
-  background: #111;
-  color: #fff;
-  text-align: center;
-}
-</style>
+  <meta charset="UTF-8">
+  <title>Supabase Connection Test</title>
 </head>
-
 <body>
 
-<h1>🎲 Dice Game</h1>
+<h2>Supabase Connection Test</h2>
+<button id="testBtn">Test Connection</button>
 
-<div id="game">
-  <h2 id="playerTurn"></h2>
-  <div id="dice"></div>
-  <button id="rollBtn">ریختن تاس</button>
-  <div id="scores"></div>
-  <div id="timer"></div>
-</div>
+<pre id="output"></pre>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
 <script>
-/* =================================================
-   =============== GAME CODE (ORIGINAL) =============
-   هیچ تغییری در منطق داده نشده
-   ================================================= */
+  const SUPABASE_URL = "https://xouwoemiyxnugontsles.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_MFoTbKuCDjhVCs1-xvKNag_UwhV0tF-";
 
-let player1Name = "Player 1";
-let player2Name = "Player 2";
-
-let player1Score = 0;
-let player2Score = 0;
-
-let diceValues = [1,1,1,1,1];
-let lockedDice = [false,false,false,false,false];
-let rollCount = 0;
-let maxRolls = 3;
-
-let currentTurn = "player_one";
-let timeLeft = 30;
-let timerInterval = null;
-
-let gamePhase = "rolling";
-let isGameActive = true;
-let isRolling = false;
-
-function renderUI() {
-  document.getElementById("playerTurn").innerText =
-    currentTurn === "player_one" ? player1Name : player2Name;
-
-  document.getElementById("scores").innerText =
-    `${player1Name}: ${player1Score} | ${player2Name}: ${player2Score}`;
-
-  document.getElementById("dice").innerText =
-    diceValues.join(" - ");
-
-  document.getElementById("timer").innerText =
-    `⏱ ${timeLeft}`;
-}
-
-function rollDice() {
-  if (rollCount >= maxRolls) return;
-
-  diceValues = diceValues.map((v, i) =>
-    lockedDice[i] ? v : Math.floor(Math.random() * 6) + 1
+  const client = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
   );
 
-  rollCount++;
-  renderUI();
-  saveRoomState();
-}
+  const output = document.getElementById("output");
 
-document.getElementById("rollBtn").addEventListener("click", rollDice);
+  document.getElementById("testBtn").addEventListener("click", async () => {
+    output.textContent = "Testing connection...";
 
-renderUI();
-</script>
+    const { data, error } = await client
+      .from("game_room_players_v0")
+      .select("*")
+      .limit(1);
 
-<script>
-/* =================================================
-   =============== SUPABASE LAYER ===================
-   فقط ارتباط – بدون منطق بازی
-   ================================================= */
-
-// 🔑 تنظیمات
-const SUPABASE_URL = "https://xouwoemiyxnugontsles.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_MFoTbKuCDjhVCs1-xvKNag_UwhV0tF-";
-const TABLE_NAME = "game_rooms_state_v0";
-const ROOM_CODE = "ROOMTEST1";
-
-// فقط یک بار
-const sb = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
-
-// ===== LOAD ROOM =====
-async function loadRoomState() {
-  const { data, error } = await sb
-    .from(TABLE_NAME)
-    .select("*")
-    .eq("room_code", ROOM_CODE)
-    .single();
-
-  if (error || !data) {
-    alert("❌ روم معتبر نیست");
-    return;
-  }
-
-  player1Name = data.player_one_name;
-  player2Name = data.player_two_name;
-
-  player1Score = data.player_one_score;
-  player2Score = data.player_two_score;
-
-  currentTurn = data.current_turn;
-
-  if (data.game_state) {
-    diceValues = data.game_state.diceValues ?? diceValues;
-    lockedDice = data.game_state.lockedDice ?? lockedDice;
-    rollCount = data.game_state.rollCount ?? rollCount;
-    timeLeft = data.game_state.turnTimer ?? timeLeft;
-    gamePhase = data.game_state.gamePhase ?? gamePhase;
-  }
-
-  renderUI();
-}
-
-// ===== SAVE STATE =====
-async function saveRoomState() {
-  const gameState = {
-    diceValues,
-    lockedDice,
-    rollCount,
-    turnTimer: timeLeft,
-    gamePhase
-  };
-
-  await sb
-    .from(TABLE_NAME)
-    .update({
-      player_one_score: player1Score,
-      player_two_score: player2Score,
-      current_turn: currentTurn,
-      game_state: gameState,
-      updated_at: new Date().toISOString()
-    })
-    .eq("room_code", ROOM_CODE);
-}
-
-// ===== AUTO LOAD =====
-window.addEventListener("load", () => {
-  loadRoomState();
-});
+    if (error) {
+      output.textContent = "ERROR:\n" + JSON.stringify(error, null, 2);
+    } else {
+      output.textContent = "SUCCESS:\n" + JSON.stringify(data, null, 2);
+    }
+  });
 </script>
 
 </body>
