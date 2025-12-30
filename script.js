@@ -57,6 +57,9 @@ let gameStats = {
     player2: { totalScore: 0, gamesPlayed: 0, wins: 0, losses: 0, totalSpecialBonus: 0 }
 };
 
+// متغیر برای ذخیره roomId
+let currentRoomId = null;
+
 /* ======================================= */
 /* ⏱️ سیستم تایمر - اصلاح شده               */
 /* ======================================= */
@@ -652,15 +655,148 @@ function checkGameCompletion() {
     else nextTurn();
 }
 
-function endGame() {
-    gameState.gameFinished = true;
-    clearInterval(timerInterval);
-    const results = calculateFinalResults();
-    updateGameStats(results);
-    showResultsScreen(results);
-    document.getElementById('main-box').style.display = 'none';
-    document.getElementById('score-board').style.display = 'none';
-    document.getElementById('top-wrapper').style.display = 'none';
+/* ======================================= */
+/* 🗄️ مدیریت اتصال به Supabase             */
+/* ======================================= */
+
+async function saveGameToSupabase() {
+    if (!window.supabase || gameState.gameFinished) return;
+    
+    try {
+        const gameData = {
+            current_player: gameState.currentPlayer,
+            time_left: timeLeft,
+            roll_count: gameState.rollCount,
+            dice_data: diceData,
+            selected_category: gameState.selectedCategory,
+            confirmed_categories: gameState.confirmedCategories,
+            special_bonuses: gameState.specialBonuses,
+            game_finished: gameState.gameFinished
+        };
+        
+        if (currentRoomId) {
+            // آپدیت رکورد موجود
+            const { error } = await window.supabase
+                .from('dice_party_games')
+                .update(gameData)
+                .eq('room_id', currentRoomId);
+            
+            if (error) throw error;
+            console.log('🔄 وضعیت بازی در Supabase آپدیت شد');
+        } else {
+            // ایجاد رکورد جدید
+            const { data, error } = await window.supabase
+                .from('dice_party_games')
+                .insert([{
+                    room_id: 'room_' + Date.now(),
+                    player1_username: 'بازیکن ۱',
+                    player2_username: 'بازیکن ۲',
+                    ...gameData
+                }])
+                .select();
+            
+            if (error) throw error;
+            currentRoomId = data[0].room_id;
+            console.log('✅ بازی جدید در Supabase ایجاد شد');
+        }
+    } catch (error) {
+        console.error('❌ خطا در ذخیره بازی:', error);
+    }
+}
+
+async function loadGameFromSupabase(roomId) {
+    if (!window.supabase) return null;
+    
+    try {
+        const { data, error } = await window.supabase
+            .from('dice_party_games')
+            .select('*')
+            .eq('room_id', roomId)
+            .single();
+        
+        if (error) throw error;
+        
+        // بازیابی وضعیت بازی
+        if (data) {
+            gameState.currentPlayer = data.current_player || 1;
+            gameState.rollCount = data.roll_count || 0;
+            gameState.selectedCategory = data.selected_category || null;
+            gameState.confirmedCategories = data.confirmed_categories || {
+                player1: Array(6).fill(null),
+                player2: Array(6).fill(null)
+            };
+            gameState.specialBonuses = data.special_bonuses || { player1: 0, player2: 0 };
+            gameState.gameFinished = data.game_finished || false;
+            
+            timeLeft = data.time_left || 30;
+            
+            if (data.dice_data && Array.isArray(data.dice_data)) {
+                diceData = data.dice_data;
+            }
+            
+            currentRoomId = roomId;
+            console.log('✅ وضعیت بازی از Supabase بازیابی شد');
+            return true;
+        }
+    } catch (error) {
+        console.error('❌ خطا در بارگذاری بازی:', error);
+    }
+    
+    return false;
+}
+
+/* ======================================= */
+/* 💾 مدیریت localStorage                  */
+/* ======================================= */
+
+function saveToLocalStorage() {
+    try {
+        const gameData = {
+            gameState,
+            diceData,
+            timeLeft,
+            gameStats,
+            currentRoomId
+        };
+        
+        if (window.GameStateManager) {
+            window.GameStateManager.saveToLocalStorage('current_game', gameData);
+        } else {
+            localStorage.setItem('dice_party_current_game', JSON.stringify(gameData));
+        }
+        
+        console.log('💾 وضعیت بازی در localStorage ذخیره شد');
+    } catch (error) {
+        console.error('❌ خطا در ذخیره localStorage:', error);
+    }
+}
+
+function loadFromLocalStorage() {
+    try {
+        let savedData;
+        
+        if (window.GameStateManager) {
+            savedData = window.GameStateManager.loadFromLocalStorage('current_game');
+        } else {
+            const data = localStorage.getItem('dice_party_current_game');
+            savedData = data ? JSON.parse(data) : null;
+        }
+        
+        if (savedData) {
+            gameState = savedData.gameState || gameState;
+            diceData = savedData.diceData || diceData;
+            timeLeft = savedData.timeLeft || 30;
+            gameStats = savedData.gameStats || gameStats;
+            currentRoomId = savedData.currentRoomId || null;
+            
+            console.log('💾 وضعیت بازی از localStorage بازیابی شد');
+            return true;
+        }
+    } catch (error) {
+        console.error('❌ خطا در بازیابی localStorage:', error);
+    }
+    
+    return false;
 }
 
 /* ======================================= */
@@ -778,6 +914,73 @@ function showResultsScreen(results) {
 }
 
 /* ======================================= */
+/* 🏆 ذخیره نتایج نهایی در دیتابیس          */
+/* ======================================= */
+
+async function saveFinalResultsToSupabase(results) {
+    if (!window.supabase) return;
+    
+    try {
+        const finalData = {
+            player1_score: results.player1.totalScore,
+            player2_score: results.player2.totalScore,
+            winner: results.winner,
+            game_details: results,
+            total_scores: {
+                player1: results.player1.totalScore,
+                player2: results.player2.totalScore
+            },
+            game_finished: true,
+            finished_at: new Date().toISOString()
+        };
+        
+        if (currentRoomId) {
+            // آپدیت رکورد موجود
+            const { error } = await window.supabase
+                .from('dice_party_games')
+                .update(finalData)
+                .eq('room_id', currentRoomId);
+            
+            if (error) throw error;
+            console.log('🏆 نتایج نهایی در Supabase ذخیره شد');
+        } else {
+            // ایجاد رکورد جدید
+            const { error } = await window.supabase
+                .from('dice_party_games')
+                .insert([{
+                    room_id: 'final_' + Date.now(),
+                    player1_username: 'بازیکن ۱',
+                    player2_username: 'بازیکن ۲',
+                    ...finalData
+                }]);
+            
+            if (error) throw error;
+            console.log('🏆 بازی جدید با نتایج نهایی در Supabase ذخیره شد');
+        }
+    } catch (error) {
+        console.error('❌ خطا در ذخیره نتایج نهایی:', error);
+    }
+}
+
+function endGame() {
+    gameState.gameFinished = true;
+    clearInterval(timerInterval);
+    const results = calculateFinalResults();
+    updateGameStats(results);
+    showResultsScreen(results);
+    
+    // ذخیره نتایج نهایی
+    saveFinalResultsToSupabase(results);
+    
+    // ذخیره در localStorage
+    saveToLocalStorage();
+    
+    document.getElementById('main-box').style.display = 'none';
+    document.getElementById('score-board').style.display = 'none';
+    document.getElementById('top-wrapper').style.display = 'none';
+}
+
+/* ======================================= */
 /* 🔄 دکمه بازی مجدد                       */
 /* ======================================= */
 
@@ -809,6 +1012,9 @@ document.getElementById('restart-btn').addEventListener('click', function() {
     document.getElementById("roll-btn").disabled = false;
     document.getElementById("roll-btn").textContent = "تاس بریز";
     document.getElementById("play-btn").disabled = true;
+    
+    // ذخیره وضعیت جدید
+    saveToLocalStorage();
 });
 
 /* ======================================= */
@@ -839,8 +1045,23 @@ function updateTurnDisplay() {
 /* ======================================= */
 
 window.addEventListener('DOMContentLoaded', () => {
+    // بازیابی وضعیت از localStorage
+    const hasSavedState = loadFromLocalStorage();
+    
     renderScoreBoard();
     renderDice();
     updateTurnDisplay();
     startTimer();
+    
+    // ذخیره دوره‌ی وضعیت بازی
+    setInterval(() => {
+        if (!gameState.gameFinished) {
+            saveToLocalStorage();
+            saveGameToSupabase();
+        }
+    }, 10000); // هر 10 ثانیه
+    
+    console.log('🎮 بازی آماده است');
+    console.log('💾 وضعیت ذخیره‌سازی:', hasSavedState ? 'بازیابی شد' : 'شروع جدید');
+    console.log('🗄️  وضعیت Supabase:', window.supabase ? 'متصل' : 'غیرفعال');
 });
