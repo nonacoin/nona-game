@@ -1,29 +1,33 @@
-// فایل supabase.js - بدون تست
+// فایل supabase.js - نسخه تست ساده
 const SUPABASE_URL = 'https://xouwoemiyxnugontsles.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_MFoTbKuCDjhVCs1-xvKNag_UwhV0tF-';
 
+console.log('🔄 در حال اتصال به Supabase...');
+
 try {
     window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    console.log('✅ Supabase برای بازی وصل شد');
+    console.log('✅ Supabase متصل شد');
     
-    // تست ساده‌تر بدون تابع RPC
-    setTimeout(() => {
-        window.supabase
-            .from('dice_party_games')
-            .select('room_id')
-            .limit(1)
-            .then(result => {
-                if (!result.error) {
-                    console.log('🎯 اتصال به دیتابیس موفق');
-                }
-            });
-    }, 1000);
+    // تست ساده اتصال
+    window.supabase
+        .from('dice_party_games')
+        .select('room_id')
+        .limit(1)
+        .then(response => {
+            if (response.error) {
+                console.error('❌ خطا در اتصال به جدول:', response.error.message);
+                console.log('💡 راهنمایی: ممکن است مشکل از RLS (Row Level Security) باشد');
+            } else {
+                console.log('✅ اتصال به جدول موفق');
+            }
+        });
     
 } catch (error) {
-    console.error('❌ خطا در اتصال:', error);
+    console.error('❌ خطای اتصال:', error);
+    console.log('💡 لطفاً تست اتصال را در test-supabase.html انجام دهید');
 }
 
-// توابع global برای استفاده در سایر فایل‌ها
-window.SupabaseManager = {
+// Export برای تست
+window.SupabaseTest = {
     getClient: () => window.supabase
 };
